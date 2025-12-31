@@ -19,8 +19,15 @@ using DataGenerator.Dev;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods and utilities for generating dungeon zone data.
+    /// Contains helper methods for spawning enemies, creating layouts, and configuring special rooms.
+    /// </summary>
     public partial class ZoneInfo
     {
+        /// <summary>
+        /// Defines dungeon difficulty stages for encounter scaling.
+        /// </summary>
         [Flags]
         public enum DungeonStage
         {
@@ -29,13 +36,25 @@ namespace DataGenerator.Data
             Advanced = 2
         }
 
+        /// <summary>Cached localization rows for special room names and descriptions.</summary>
         private static Dictionary<string, LocalText> specialRows;
 
+        /// <summary>
+        /// Initializes all localization strings for zone generation.
+        /// Must be called before generating translated zone data.
+        /// </summary>
         public static void InitStringsAll()
         {
             specialRows = Localization.readLocalizationRows(GenPath.TL_PATH + "Special.out.txt");
         }
 
+        /// <summary>
+        /// Creates a mob spawn step for Unown Pokemon based on letter forms.
+        /// </summary>
+        /// <param name="unown">String of Unown letter forms to spawn (a-z, !, ?).</param>
+        /// <param name="level">Level of the spawned Unown.</param>
+        /// <param name="unrecruitable">If true, the Unown cannot be recruited.</param>
+        /// <returns>A MobSpawnStep configured for the specified Unown forms.</returns>
         static MobSpawnStep<MapGenContext> GetUnownSpawns(string unown, int level, bool unrecruitable)
         {
             MobSpawnStep<MapGenContext> spawnStep = new MobSpawnStep<MapGenContext>();
@@ -58,6 +77,11 @@ namespace DataGenerator.Data
             return spawnStep;
         }
 
+        /// <summary>
+        /// Creates a placement step that spawns a single selectable Pokemon.
+        /// </summary>
+        /// <param name="teamSpawn">The team member spawn configuration.</param>
+        /// <returns>A PlaceRandomMobsStep configured for the single spawn.</returns>
         static PlaceRandomMobsStep<MapGenContext> GetSingleSelectableSpawn(TeamMemberSpawn teamSpawn)
         {
             PoolTeamSpawner subSpawn = new PoolTeamSpawner();
@@ -71,6 +95,20 @@ namespace DataGenerator.Data
             return mobStep;
         }
 
+        /// <summary>
+        /// Creates a secret room floor generator with treasure and enemies.
+        /// </summary>
+        /// <param name="translate">If true, uses translated room names.</param>
+        /// <param name="map_type">The map template ID to use.</param>
+        /// <param name="moveBack">Floor offset for exit stairs.</param>
+        /// <param name="wall">Wall tileset identifier.</param>
+        /// <param name="floor">Floor tileset identifier.</param>
+        /// <param name="water">Water tileset identifier.</param>
+        /// <param name="grass">Grass tileset identifier (can be null).</param>
+        /// <param name="element">Element type for spawned items.</param>
+        /// <param name="enemies">List of enemy spawns for the room.</param>
+        /// <param name="locs">Treasure chest locations.</param>
+        /// <returns>A floor generator configured for the secret room.</returns>
         static IFloorGen getSecretRoom(bool translate, string map_type, int moveBack, string wall, string floor, string water, string grass, string element, SpawnList<TeamMemberSpawn> enemies, params Loc[] locs)
         {
             LoadGen layout = new LoadGen();
@@ -127,6 +165,17 @@ namespace DataGenerator.Data
             return layout;
         }
 
+        /// <summary>
+        /// Creates a mysterious passage floor generator with special encounters.
+        /// </summary>
+        /// <param name="translate">If true, uses translated room names.</param>
+        /// <param name="zoneLevel">Base level for spawned Pokemon.</param>
+        /// <param name="stage">Current dungeon difficulty stage.</param>
+        /// <param name="map_type">The map template ID to use.</param>
+        /// <param name="moveBack">Floor offset for exit stairs.</param>
+        /// <param name="unrecruitable">If true, spawned Pokemon cannot be recruited.</param>
+        /// <param name="noExp">If true, spawned Pokemon give no experience.</param>
+        /// <returns>A floor generator configured for the mystery room.</returns>
         static IFloorGen getMysteryRoom(bool translate, int zoneLevel, DungeonStage stage, string map_type, int moveBack, bool unrecruitable, bool noExp)
         {
             GridFloorGen layout = new GridFloorGen();

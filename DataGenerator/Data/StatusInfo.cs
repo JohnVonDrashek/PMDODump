@@ -10,10 +10,20 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating Pokemon status effect data.
+    /// Includes major statuses (sleep, burn, freeze, etc.), stat changes, and temporary conditions.
+    /// </summary>
     public static class StatusInfo
     {
+        /// <summary>
+        /// Maximum number of status effects available.
+        /// </summary>
         public const int MAX_STATUSES = 150;
 
+        /// <summary>
+        /// Generates and saves all status effect data entries.
+        /// </summary>
         public static void AddStatusData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Status.ToString());
@@ -25,6 +35,9 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Generates minimal status data for testing with only the first status.
+        /// </summary>
         public static void AddMinStatusData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Status.ToString());
@@ -36,6 +49,11 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the status effect data for a specific index.
+        /// </summary>
+        /// <param name="ii">The status index to retrieve.</param>
+        /// <returns>A tuple containing the file name and the StatusData object.</returns>
         public static (string, StatusData) GetStatusData(int ii)
         {
             string fileName = "";

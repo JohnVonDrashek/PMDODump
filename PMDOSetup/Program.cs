@@ -13,29 +13,88 @@ using System.Threading;
 
 namespace PMDOSetup
 {
+    /// <summary>
+    /// Represents a GitHub release with its associated metadata.
+    /// </summary>
+    /// <remarks>
+    /// This class maps to the GitHub API release object and contains
+    /// the essential information needed to download and install a specific version.
+    /// </remarks>
     public class Release
     {
+        /// <summary>
+        /// Gets or sets the version name of the release (e.g., "0.8.11").
+        /// </summary>
         public string Name { get; set; }
-        public string Tag_Name {get; set;}
-        public string Body {get; set;}
+
+        /// <summary>
+        /// Gets or sets the Git tag associated with this release.
+        /// </summary>
+        /// <remarks>
+        /// Used to fetch submodule information at the specific release point.
+        /// </remarks>
+        public string Tag_Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the release notes/changelog body text.
+        /// </summary>
+        public string Body { get; set; }
     }
 
+    /// <summary>
+    /// Main program class for the PMDO (Pokemon Mystery Dungeon Online) game updater.
+    /// </summary>
+    /// <remarks>
+    /// This updater handles downloading, installing, and updating the PMDO game
+    /// from GitHub releases. It supports fresh installations, incremental updates,
+    /// forced updates, version rollbacks, and self-updates.
+    /// </remarks>
     class Program
     {
+        /// <summary>The directory path where the updater executable is located.</summary>
         static string updaterPath;
+
+        /// <summary>The filename of the updater executable.</summary>
         static string updaterExe;
+
+        /// <summary>The GitHub repository path for version checking (e.g., "audinowho/PMDODump").</summary>
         static string curVerRepo;
+
+        /// <summary>The name of the asset submodule containing game data.</summary>
         static string assetSubmodule;
+
+        /// <summary>The name of the executable submodule containing game binaries.</summary>
         static string exeSubmodule;
+
+        /// <summary>List of file and directory paths to delete during updates.</summary>
         static List<string> filesToDelete;
+
+        /// <summary>List of files that require executable permissions on Unix systems.</summary>
         static List<string> executableFiles;
 
+        /// <summary>The path to the game's save data directory.</summary>
         static string saveDir;
+
+        /// <summary>The path for backing up save data during updates.</summary>
         static string saveBackupDir;
 
+        /// <summary>The version of the updater from the last run.</summary>
         static Version lastUpdaterVersion;
+
+        /// <summary>The currently installed game version.</summary>
         static Version lastVersion;
+
+        /// <summary>Command-line argument for automated menu selection (-1 for interactive mode).</summary>
         static int argNum;
+
+        /// <summary>
+        /// Entry point for the PMDO updater application.
+        /// </summary>
+        /// <remarks>
+        /// Displays a menu for existing installations or proceeds directly to installation
+        /// for new setups. Supports command-line arguments for automated operation.
+        /// Menu options: 1=Force Update, 2=Update Updater, 3=Reset XML, 4=Uninstall, 5=Revert Version.
+        /// </remarks>
         static void Main()
         {
             string[] args = Environment.GetCommandLineArgs();
@@ -145,6 +204,14 @@ namespace PMDOSetup
             }
         }
 
+        /// <summary>
+        /// Downloads and installs the latest version of the updater itself.
+        /// </summary>
+        /// <remarks>
+        /// Backs up the current updater executable, downloads the platform-specific
+        /// updater package from GitHub releases, extracts it, and sets appropriate
+        /// file permissions on Unix systems.
+        /// </remarks>
         static void UpdateUpdater()
         {
             string tempUpdater;
@@ -231,9 +298,17 @@ namespace PMDOSetup
             ReadKey();
         }
 
+        /// <summary>Flag indicating whether an async download is still in progress.</summary>
         static bool DownloadIncomplete;
+
+        /// <summary>Lock object for thread-safe console output during downloads.</summary>
         static object lockObj = new object();
 
+        /// <summary>
+        /// Handles download progress events to display progress in the console.
+        /// </summary>
+        /// <param name="sender">The WebClient that raised the event.</param>
+        /// <param name="e">Event arguments containing bytes received and total bytes.</param>
         private static void Wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             lock (lockObj)
@@ -248,12 +323,28 @@ namespace PMDOSetup
                     Console.Write(String.Format("Progress: {0}", FileSizeToPrettyString(e.BytesReceived)));
             }
         }
+
+        /// <summary>
+        /// Handles download completion events to signal the download is finished.
+        /// </summary>
+        /// <param name="sender">The WebClient that raised the event.</param>
+        /// <param name="e">Event arguments indicating completion status.</param>
         private static void Wc_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             DownloadIncomplete = false;
         }
 
 
+        /// <summary>
+        /// Displays a paginated list of available releases and allows the user to select one.
+        /// </summary>
+        /// <returns>
+        /// The selected <see cref="Release"/> object, or null if the user cancels the selection.
+        /// </returns>
+        /// <remarks>
+        /// Fetches all releases from the GitHub API and presents them in pages of 9.
+        /// Use arrow keys to navigate pages and number keys to select a version.
+        /// </remarks>
         static Release GetSpecificRelease()
         {
             //3: read from site what version is uploaded. if greater than the current version, upgrade
@@ -302,6 +393,20 @@ namespace PMDOSetup
             }
         }
 
+        /// <summary>
+        /// Performs the main game update or installation process.
+        /// </summary>
+        /// <param name="force">
+        /// If true, forces the update even if the installed version is current or newer.
+        /// </param>
+        /// <param name="specificRelease">
+        /// Optional specific release to install. If null, installs the latest release.
+        /// </param>
+        /// <remarks>
+        /// This method handles the complete update workflow: checking versions, downloading
+        /// platform-specific executables and assets from GitHub, backing up save data,
+        /// cleaning old files, extracting new files, and updating the configuration XML.
+        /// </remarks>
         static void Update(bool force, Release specificRelease)
         {
             Version nextVersion;
@@ -489,6 +594,20 @@ namespace PMDOSetup
             ReadKey();
         }
 
+        /// <summary>
+        /// Extracts a ZIP archive to the updater directory with optional path transformations.
+        /// </summary>
+        /// <param name="tempExe">The path to the ZIP file to extract.</param>
+        /// <param name="destRoot">
+        /// Optional destination root folder. If specified, extracted files are placed under this folder.
+        /// </param>
+        /// <param name="sourceDepth">
+        /// Number of leading path segments to strip from archive entries.
+        /// Used to skip container folders in the archive.
+        /// </param>
+        /// <remarks>
+        /// Sets executable permissions on Unix systems for files listed in the executableFiles collection.
+        /// </remarks>
         static void Unzip(string tempExe, string destRoot, int sourceDepth)
         {
             using (ZipArchive archive = ZipFile.OpenRead(tempExe))
@@ -533,6 +652,14 @@ namespace PMDOSetup
         }
 
 
+        /// <summary>
+        /// Extracts a ZIP file, renames internal paths from PMDC to PMDO, and re-archives.
+        /// </summary>
+        /// <param name="tempExe">The path to the ZIP file to process.</param>
+        /// <remarks>
+        /// This method handles legacy naming conventions by renaming the PMDC folder
+        /// and executable to PMDO. Currently commented out in the update flow.
+        /// </remarks>
         static void RenameRezip(string tempExe)
         {
             string unzipPath = Path.Join(updaterPath, "temp", "unzip");
@@ -570,6 +697,12 @@ namespace PMDOSetup
             Directory.Delete(unzipPath, true);
         }
 
+        /// <summary>
+        /// Recursively adds files and directories to a ZIP archive.
+        /// </summary>
+        /// <param name="archive">The ZIP archive to add entries to.</param>
+        /// <param name="unzipPath">The source directory path to archive.</param>
+        /// <param name="destPath">The destination path within the archive.</param>
         private static void zipRecursive(ZipArchive archive, string unzipPath, string destPath)
         {
             foreach (string path in Directory.GetFiles(unzipPath))
@@ -585,6 +718,14 @@ namespace PMDOSetup
                 zipRecursive(archive, Path.Join(unzipPath, file), destFile);
             }
         }
+        /// <summary>
+        /// Recursively copies all files and subdirectories from source to target.
+        /// </summary>
+        /// <param name="source">The source directory to copy from.</param>
+        /// <param name="target">The target directory to copy to.</param>
+        /// <remarks>
+        /// Used to backup save data before applying updates. Overwrites existing files.
+        /// </remarks>
         private static void copyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
         {
             foreach (DirectoryInfo dir in source.GetDirectories())
@@ -593,12 +734,27 @@ namespace PMDOSetup
                 file.CopyTo(Path.Combine(target.FullName, file.Name), true);
         }
 
+        /// <summary>
+        /// Waits for a key press in interactive mode.
+        /// </summary>
+        /// <remarks>
+        /// Only pauses for input when running interactively (argNum == -1).
+        /// Skips the wait when running with command-line automation arguments.
+        /// </remarks>
         static void ReadKey()
         {
             if (argNum == -1)
                 Console.ReadKey();
         }
 
+        /// <summary>
+        /// Loads updater configuration from the Updater.xml file.
+        /// </summary>
+        /// <remarks>
+        /// Reads repository URLs, version information, files to delete, and executable
+        /// file lists from the XML configuration. Creates a default configuration if
+        /// the file doesn't exist or is corrupted.
+        /// </remarks>
         static void LoadXml()
         {
             try
@@ -641,6 +797,13 @@ namespace PMDOSetup
             }
         }
 
+        /// <summary>
+        /// Initializes configuration with default values for a fresh installation.
+        /// </summary>
+        /// <remarks>
+        /// Sets up the default repository, submodule names, empty version history,
+        /// default files to delete during updates, and files requiring executable permissions.
+        /// </remarks>
         static void DefaultXml()
         {
             curVerRepo = "audinowho/PMDODump";
@@ -681,6 +844,13 @@ namespace PMDOSetup
             executableFiles.Add("WaypointServer.app/Contents/MacOS/WaypointServer");
         }
 
+        /// <summary>
+        /// Saves the current configuration to the Updater.xml file.
+        /// </summary>
+        /// <remarks>
+        /// Persists repository settings, version information, deletion list, and
+        /// executable file list to XML. Called after successful updates and configuration changes.
+        /// </remarks>
         static void SaveXml()
         {
             try
@@ -721,6 +891,17 @@ namespace PMDOSetup
             }
         }
 
+        /// <summary>
+        /// Deletes a file or directory, respecting exclusion rules.
+        /// </summary>
+        /// <param name="path">The file or directory path to delete.</param>
+        /// <returns>
+        /// True if the path was fully deleted; false if any excluded items prevented complete deletion.
+        /// </returns>
+        /// <remarks>
+        /// Recursively processes directories and skips paths matching exclusion rules
+        /// (e.g., .git directories). Deletes empty parent directories after removing contents.
+        /// </remarks>
         static bool DeleteWithExclusions(string path)
         {
             if (isExcluded(path))
@@ -757,6 +938,14 @@ namespace PMDOSetup
             return deletedAll;
         }
 
+        /// <summary>
+        /// Determines whether a path should be excluded from deletion.
+        /// </summary>
+        /// <param name="path">The file or directory path to check.</param>
+        /// <returns>True if the path should be excluded from deletion; otherwise, false.</returns>
+        /// <remarks>
+        /// Currently excludes .git directories to preserve version control data.
+        /// </remarks>
         static bool isExcluded(string path)
         {
             //ignore .git
@@ -767,6 +956,17 @@ namespace PMDOSetup
             return false;
         }
 
+        /// <summary>
+        /// Detects the current operating system and architecture.
+        /// </summary>
+        /// <returns>
+        /// A platform identifier string (e.g., "linux-x64", "osx-x64", "windows-x86")
+        /// or "unknown" if the platform cannot be determined.
+        /// </returns>
+        /// <remarks>
+        /// Supports Linux, macOS (OSX), Windows, FreeBSD, NetBSD, and OpenBSD.
+        /// Appends "-x64" or "-x86" based on whether the OS is 64-bit.
+        /// </remarks>
         private static string GetCurrentPlatform()
         {
             string[] platformNames = new string[]
@@ -794,6 +994,13 @@ namespace PMDOSetup
             return "unknown";
         }
 
+        /// <summary>
+        /// Creates and appends a text element to an XML parent node.
+        /// </summary>
+        /// <param name="doc">The XML document used to create the element.</param>
+        /// <param name="parentNode">The parent node to append the new element to.</param>
+        /// <param name="name">The element tag name.</param>
+        /// <param name="text">The text content of the element.</param>
         private static void appendConfigNode(XmlDocument doc, XmlNode parentNode, string name, string text)
         {
             XmlNode node = doc.CreateElement(name);
@@ -801,6 +1008,17 @@ namespace PMDOSetup
             parentNode.AppendChild(node);
         }
 
+        /// <summary>
+        /// Converts a file size in bytes to a human-readable string with units.
+        /// </summary>
+        /// <param name="fileSize">The file size in bytes.</param>
+        /// <returns>
+        /// A formatted string with the size and appropriate unit (e.g., "1.5 MB", "256 KB").
+        /// </returns>
+        /// <remarks>
+        /// Uses base-10 (1000 bytes per KB) for size calculations.
+        /// Supports units up to TB.
+        /// </remarks>
         private static string FileSizeToPrettyString(double fileSize)
         {
             const bool useBase10Separator = true;

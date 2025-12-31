@@ -18,8 +18,19 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing post-game dungeon zone definitions.
+    /// This portion defines end-game content including Sacred Tower, Uncharted Waters,
+    /// and other high-difficulty dungeons available after completing the main story.
+    /// </summary>
     public partial class ZoneInfo
     {
+        /// <summary>
+        /// Populates the Sacred Tower zone data with floor layouts, spawns, and items.
+        /// Sacred Tower is a 70-floor post-game dungeon with level cap restrictions.
+        /// </summary>
+        /// <param name="zone">The zone data object to populate.</param>
+        /// <param name="translate">Whether to use translated/localized text.</param>
         static void FillSacredTower(ZoneData zone, bool translate)
         {
             #region SACRED TOWER
@@ -152,6 +163,12 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Adds a standard exit stair step for Uncharted Waters dungeon floors.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="dest">The destination segment location for the stairs.</param>
         static void AddUnchartedExitStep<T>(MapGen<T> layout, SegLoc dest)
             where T : class, IFloorPlanGenContext, IPlaceableGenContext<MapGenEntrance>, IPlaceableGenContext<MapGenExit>
         {
@@ -163,6 +180,12 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_EXITS, step);
         }
 
+        /// <summary>
+        /// Adds a secret side exit stair step for Uncharted Waters dungeon floors.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="dest">The destination segment location for the secret stairs.</param>
         static void AddUnchartedSideExitStep<T>(MapGen<T> layout, SegLoc dest)
             where T : class, IFloorPlanGenContext, IPlaceableGenContext<MapGenEntrance>, IPlaceableGenContext<MapGenExit>
         {
@@ -173,6 +196,12 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_EXITS, trapStep);
         }
 
+        /// <summary>
+        /// Populates the Uncharted Waters zone data with multiple branching sub-dungeons.
+        /// Uncharted Waters is a post-game zone with Shallow, Chilly, and Deep segments.
+        /// </summary>
+        /// <param name="zone">The zone data object to populate.</param>
+        /// <param name="translate">Whether to use translated/localized text.</param>
         static void FillUnchartedWaters(ZoneData zone, bool translate)
         {
             #region UNCHARTED WATERS

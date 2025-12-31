@@ -18,10 +18,19 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing roguelike mode zone definitions.
+    /// This portion defines the Guildmaster Trail and other roguelike dungeons
+    /// with special rules like item/Pokemon transfer between runs.
+    /// </summary>
     public partial class ZoneInfo
     {
-
         #region GUILDMASTER TRAIL
+        /// <summary>
+        /// Populates the Guildmaster Trail zone data with floor layouts, spawns, and items.
+        /// Guildmaster Trail is a 30-floor roguelike dungeon with level cap and limited bag space.
+        /// </summary>
+        /// <param name="zone">The zone data object to populate.</param>
         static void FillGuildmaster(ZoneData zone)
         {
             zone.Name = new LocalText("Guildmaster Trail");

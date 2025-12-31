@@ -11,9 +11,21 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing skill definitions for Pokemon moves from generation 5 onwards.
+    /// </summary>
+    /// <remarks>
+    /// Contains FillSkillsGen5Plus which populates skill data for indices 468+.
+    /// These moves were introduced in Black/White and subsequent games.
+    /// </remarks>
     public partial class SkillInfo
     {
-
+        /// <summary>
+        /// Populates skill data for generation 5+ Pokemon moves.
+        /// </summary>
+        /// <param name="skill">The skill data object to populate.</param>
+        /// <param name="ii">The skill index (468 and above).</param>
+        /// <param name="fileName">Output parameter for custom filename override, if any.</param>
         static void FillSkillsGen5Plus(SkillData skill, int ii, ref string fileName)
         {
             if (ii == 468)

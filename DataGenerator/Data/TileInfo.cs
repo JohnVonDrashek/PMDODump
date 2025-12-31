@@ -15,10 +15,21 @@ using Microsoft.Xna.Framework;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating tile and terrain data.
+    /// Includes dungeon traps, stairs, switches, special tiles, and terrain types.
+    /// </summary>
     public static class TileInfo
     {
+        /// <summary>
+        /// Maximum number of tile effect types available.
+        /// </summary>
         public const int MAX_TILES = 80;
 
+        /// <summary>
+        /// Generates and saves all tile effect data entries.
+        /// Includes traps, stairs, chests, switches, and special dungeon tiles.
+        /// </summary>
         public static void AddTileData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Tile.ToString());
@@ -30,7 +41,9 @@ namespace DataGenerator.Data
             }
         }
 
-
+        /// <summary>
+        /// Generates minimal tile data for testing with only the first tile.
+        /// </summary>
         public static void AddMinTileData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Tile.ToString());
@@ -42,8 +55,11 @@ namespace DataGenerator.Data
             }
         }
 
-
-
+        /// <summary>
+        /// Retrieves the tile effect data for a specific index.
+        /// </summary>
+        /// <param name="ii">The tile index to retrieve.</param>
+        /// <returns>A tuple containing the file name and the TileData object.</returns>
         public static (string, TileData) GetTileData(int ii)
         {
             string fileName = "";
@@ -1367,8 +1383,15 @@ namespace DataGenerator.Data
             return (fileName, tile);
         }
 
+        /// <summary>
+        /// Maximum number of terrain types available.
+        /// </summary>
         public const int MAX_TERRAIN = 9;
 
+        /// <summary>
+        /// Generates and saves all terrain data entries.
+        /// Includes floor, wall, water, lava, abyss, and foliage terrain types.
+        /// </summary>
         public static void AddTerrainData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Terrain.ToString());
@@ -1379,6 +1402,9 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Generates minimal terrain data for testing with only the first terrain type.
+        /// </summary>
         public static void AddMinTerrainData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Terrain.ToString());
@@ -1389,9 +1415,15 @@ namespace DataGenerator.Data
             }
         }
 
-
-        //TODO: we need one class specifically for ground, and one class specifically for wall
-        //Also make the ground and wall instance classes hold the textures, and make those modifiable on runtime (for generation)
+        /// <summary>
+        /// Retrieves the terrain data for a specific index.
+        /// </summary>
+        /// <param name="ii">The terrain index to retrieve.</param>
+        /// <returns>A tuple containing the asset name and the TerrainData object.</returns>
+        /// <remarks>
+        /// TODO: We need one class specifically for ground, and one class specifically for wall.
+        /// Also make the ground and wall instance classes hold the textures, and make those modifiable on runtime (for generation).
+        /// </remarks>
         public static (string, TerrainData) GetTerrainData(int ii)
         {
             string asset = "";

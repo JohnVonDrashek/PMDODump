@@ -10,10 +10,20 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating Pokemon ability (intrinsic) data.
+    /// Each intrinsic defines passive effects that activate during battle.
+    /// </summary>
     public static class IntrinsicInfo
     {
+        /// <summary>
+        /// Maximum number of intrinsic abilities available in the game.
+        /// </summary>
         public const int MAX_INTRINSICS = 299;
 
+        /// <summary>
+        /// Generates and saves all intrinsic ability data entries.
+        /// </summary>
         public static void AddIntrinsicData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Intrinsic.ToString());
@@ -25,6 +35,10 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Generates minimal intrinsic data with only the "None" ability.
+        /// Used for testing or minimal game configurations.
+        /// </summary>
         public static void AddMinIntrinsicData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Intrinsic.ToString());
@@ -36,6 +50,11 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the intrinsic ability data for a specific index.
+        /// </summary>
+        /// <param name="ii">The index of the intrinsic ability to retrieve.</param>
+        /// <returns>A tuple containing the file name and the IntrinsicData object.</returns>
         public static (string, IntrinsicData) GetIntrinsicData(int ii)
         {
             string fileName = "";

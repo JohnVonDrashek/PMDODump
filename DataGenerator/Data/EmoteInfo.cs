@@ -10,9 +10,20 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating character emote data.
+    /// Emotes are visual expressions displayed above Pokemon during dialogue and events.
+    /// </summary>
     public static class EmoteInfo
     {
+        /// <summary>
+        /// Maximum number of emote types available.
+        /// </summary>
         public const int MAX_EMOTES = 10;
+
+        /// <summary>
+        /// Generates and saves all emote data entries.
+        /// </summary>
         public static void AddEmoteData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Emote.ToString());
@@ -22,6 +33,10 @@ namespace DataGenerator.Data
                 DataManager.SaveEntryData(Text.Sanitize(emote.Name.DefaultText).ToLower(), DataManager.DataType.Emote.ToString(), emote);
             }
         }
+
+        /// <summary>
+        /// Generates minimal emote data for testing.
+        /// </summary>
         public static void AddMinEmoteData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Emote.ToString());
@@ -32,6 +47,11 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the emote data for a specific index.
+        /// </summary>
+        /// <param name="ii">The index of the emote to retrieve.</param>
+        /// <returns>An EmoteData object containing the emote configuration.</returns>
         public static EmoteData GetEmoteData(int ii)
         {
             if (ii == 0)

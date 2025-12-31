@@ -18,9 +18,18 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing base/debug zone definitions.
+    /// This portion defines developer testing zones and foundational zone templates
+    /// used for debugging game mechanics and procedural generation.
+    /// </summary>
     public partial class ZoneInfo
     {
-
+        /// <summary>
+        /// Populates the debug zone data with test floors for development purposes.
+        /// The debug zone includes various test scenarios for traps, FOV, and combat.
+        /// </summary>
+        /// <param name="zone">The zone data object to populate.</param>
         static void FillDebugZone(ZoneData zone)
         {
             zone.Name = new LocalText("**Debug Zone");

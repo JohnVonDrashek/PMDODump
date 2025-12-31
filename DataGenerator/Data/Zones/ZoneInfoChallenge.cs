@@ -18,8 +18,19 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing challenge dungeon zone definitions.
+    /// This portion defines special dungeons with unique restrictions and rules,
+    /// such as Tiny Tunnel (size-restricted) and other challenge-mode content.
+    /// </summary>
     public partial class ZoneInfo
     {
+        /// <summary>
+        /// Populates the Tiny Tunnel zone data with floor layouts, spawns, and items.
+        /// Tiny Tunnel is a challenge dungeon with level cap and team size restrictions.
+        /// </summary>
+        /// <param name="zone">The zone data object to populate.</param>
+        /// <param name="translate">Whether to use translated/localized text.</param>
         static void FillTinyTunnel(ZoneData zone, bool translate)
         {
             #region TINY TUNNEL

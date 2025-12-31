@@ -11,9 +11,21 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing skill definitions for Pokemon moves from generations 1-4.
+    /// </summary>
+    /// <remarks>
+    /// Contains FillSkillsPMD which populates skill data for indices 0-467.
+    /// These moves correspond to the original PMD games' movesets.
+    /// </remarks>
     public partial class SkillInfo
     {
-
+        /// <summary>
+        /// Populates skill data for generation 1-4 Pokemon moves.
+        /// </summary>
+        /// <param name="skill">The skill data object to populate.</param>
+        /// <param name="ii">The skill index (0-467).</param>
+        /// <param name="fileName">Output parameter for custom filename override, if any.</param>
         static void FillSkillsPMD(SkillData skill, int ii, ref string fileName)
         {
             if (ii == 0)

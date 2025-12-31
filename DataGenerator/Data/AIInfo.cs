@@ -11,8 +11,18 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating AI tactic data.
+    /// Tactics define behavior patterns for Pokemon in dungeons, including combat strategies,
+    /// item handling, and movement priorities.
+    /// </summary>
     public static class AIInfo
     {
+        /// <summary>
+        /// Generates and saves all AI tactic data entries.
+        /// Includes player team tactics (Stick Together, Go After Foes, etc.) and
+        /// enemy AI behaviors (Normal Wander, Boss, Thief, etc.).
+        /// </summary>
         public static void AddAIData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.AI.ToString());
@@ -436,7 +446,9 @@ namespace DataGenerator.Data
             }
         }
 
-
+        /// <summary>
+        /// Generates minimal AI tactic data for testing with only the basic "Stick Together" tactic.
+        /// </summary>
         public static void AddMinAIData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.AI.ToString());

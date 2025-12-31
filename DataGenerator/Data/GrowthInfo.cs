@@ -10,20 +10,52 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods and data for generating experience growth group data.
+    /// Growth groups define how quickly different Pokemon level up based on experience curves.
+    /// </summary>
     public static class GrowthInfo
     {
-
+        /// <summary>
+        /// Defines the available experience growth rate categories.
+        /// Each group determines how much experience is needed to level up.
+        /// </summary>
         public enum GrowthGroup
         {
+            /// <summary>
+            /// Special value indicating no growth group assigned.
+            /// </summary>
             None = -1,
+            /// <summary>
+            /// Erratic growth curve with irregular experience requirements. Quick early levels, slower mid-game.
+            /// </summary>
             Erratic = 0,
+            /// <summary>
+            /// Fast growth curve requiring less total experience to reach max level.
+            /// </summary>
             Fast,
+            /// <summary>
+            /// Medium-fast growth curve. Standard progression speed, slightly faster than average.
+            /// </summary>
             MediumFast,
+            /// <summary>
+            /// Medium-slow growth curve. Standard progression speed, slightly slower than average.
+            /// </summary>
             MediumSlow,
+            /// <summary>
+            /// Slow growth curve requiring significantly more experience to level up.
+            /// </summary>
             Slow,
+            /// <summary>
+            /// Fluctuating growth curve with variable experience requirements. Slow early, fast mid-game, slow late.
+            /// </summary>
             Fluctuating
         }
 
+        /// <summary>
+        /// Experience point requirements for each level (rows) across all growth groups (columns).
+        /// Columns correspond to: Erratic, Fast, MediumFast, MediumSlow, Slow, Fluctuating.
+        /// </summary>
         static int[,] EXP_CURVES = { { 0, 0, 0, 0, 0, 0 },
                                     { 15, 6, 8, 9, 10, 4 },
                                     { 52, 21, 27, 57, 33, 13 },
@@ -126,7 +158,15 @@ namespace DataGenerator.Data
                                     { 600000, 800000, 1000000, 1059860, 1250000, 1640000 } };
 
 
+        /// <summary>
+        /// Maximum number of growth groups available.
+        /// </summary>
         public const int MAX_GROUPS = 6;
+
+        /// <summary>
+        /// Generates and saves all growth group data entries.
+        /// Creates experience curve data for each growth group type.
+        /// </summary>
         public static void AddGrowthGroupData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.GrowthGroup.ToString());
@@ -141,6 +181,11 @@ namespace DataGenerator.Data
                 DataManager.SaveEntryData(Text.Sanitize(skillGroup.Name.DefaultText).ToLower(), DataManager.DataType.GrowthGroup.ToString(), skillGroup);
             }
         }
+
+        /// <summary>
+        /// Generates minimal growth group data with a single linear experience curve.
+        /// Used for testing or minimal game configurations.
+        /// </summary>
         public static void AddMinGrowthGroupData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.GrowthGroup.ToString());

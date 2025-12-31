@@ -17,8 +17,34 @@ using System.IO;
 
 namespace DataGenerator
 {
+    /// <summary>
+    /// Entry point for the DataGenerator tool, a command-line utility for managing game data assets.
+    /// Handles data serialization, localization, indexing, and content generation for the Pokemon Mystery Dungeon game.
+    /// </summary>
+    /// <remarks>
+    /// Supports various command-line operations including:
+    /// <list type="bullet">
+    /// <item><description>-asset: Set the asset path</description></item>
+    /// <item><description>-raw: Set the raw/dev path</description></item>
+    /// <item><description>-gen: Set the data generation path</description></item>
+    /// <item><description>-index: Run indexing for specified data types</description></item>
+    /// <item><description>-strings out/in: Export or import localization strings</description></item>
+    /// <item><description>-itemprep/-zoneprep/-monsterprep: Prepare content lists for items, zones, or monsters</description></item>
+    /// <item><description>-reserialize: Reserialize data for specified types</description></item>
+    /// <item><description>-dump: Export data for specified types</description></item>
+    /// <item><description>-dumpmin: Export minimal data set</description></item>
+    /// <item><description>-preconvert: Prepare assets for conversion</description></item>
+    /// </list>
+    /// </remarks>
     class Program
     {
+        /// <summary>
+        /// Main entry point that parses command-line arguments and executes the appropriate data operations.
+        /// </summary>
+        /// <remarks>
+        /// Sets culture to invariant for consistent serialization, initializes paths,
+        /// and dispatches to the appropriate operation based on command-line flags.
+        /// </remarks>
         static void Main()
         {
 

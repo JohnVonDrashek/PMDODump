@@ -19,17 +19,39 @@ using DataGenerator.Dev;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing zone data tables, special room generation, and mystery passage logic.
+    /// This portion defines dungeon difficulty stages and methods for creating secret rooms,
+    /// mystery passages, and special spawn configurations.
+    /// </summary>
     public partial class ZoneInfo
     {
+        /// <summary>
+        /// Represents the difficulty progression stage of a dungeon.
+        /// Used to scale enemy spawns, items, and rewards appropriately.
+        /// </summary>
         public enum DungeonStage
         {
+            /// <summary>Early-game dungeon with low-level encounters.</summary>
             Beginner = 0,
+            /// <summary>Mid-game dungeon with moderate difficulty.</summary>
             Intermediate = 1,
+            /// <summary>Late-game dungeon with challenging encounters.</summary>
             Advanced = 2,
+            /// <summary>Post-credits content with high-level encounters.</summary>
             PostGame = 3,
+            /// <summary>Roguelike mode with special rules and scaling.</summary>
             Rogue = 4
         }
 
+        /// <summary>
+        /// Creates a mob spawn step for Unown Pokemon based on a letter string.
+        /// Each character in the string spawns the corresponding Unown form.
+        /// </summary>
+        /// <param name="unown">String of letters/symbols to spawn as Unown forms (a-z, !, ?).</param>
+        /// <param name="level">The level of the Unown spawns.</param>
+        /// <param name="unrecruitable">Whether the Unown cannot be recruited.</param>
+        /// <returns>A configured mob spawn step for Unown.</returns>
         static MobSpawnStep<MapGenContext> GetUnownSpawns(string unown, int level, bool unrecruitable)
         {
             level = Math.Max(level, 1);
@@ -53,6 +75,11 @@ namespace DataGenerator.Data
             return spawnStep;
         }
 
+        /// <summary>
+        /// Creates a mob placement step that spawns a pair of a specific team member.
+        /// </summary>
+        /// <param name="teamSpawn">The team member spawn configuration.</param>
+        /// <returns>A placement step that spawns 2 of the specified mob.</returns>
         static PlaceRandomMobsStep<MapGenContext> GetSingleSelectableSpawn(TeamMemberSpawn teamSpawn)
         {
             PoolTeamSpawner subSpawn = new PoolTeamSpawner();
@@ -66,6 +93,22 @@ namespace DataGenerator.Data
             return mobStep;
         }
 
+        /// <summary>
+        /// Creates a secret treasure room floor generator with themed tileset and treasure spawns.
+        /// </summary>
+        /// <param name="translate">Whether to use translated/localized room names.</param>
+        /// <param name="map_type">The map template ID to load.</param>
+        /// <param name="moveBack">The segment offset for the return stairs destination.</param>
+        /// <param name="wall">The wall tileset ID.</param>
+        /// <param name="floor">The floor tileset ID.</param>
+        /// <param name="water">The water tileset ID.</param>
+        /// <param name="grass">The grass tileset ID (or null for none).</param>
+        /// <param name="element">The elemental type of the room terrain.</param>
+        /// <param name="gamePhase">The difficulty stage for item scaling.</param>
+        /// <param name="access">The dungeon accessibility rules.</param>
+        /// <param name="enemies">Weighted list of enemy spawns for the room.</param>
+        /// <param name="locs">Locations for treasure box placement.</param>
+        /// <returns>A configured floor generator for the secret room.</returns>
         static IFloorGen getSecretRoom(bool translate, string map_type, int moveBack, string wall, string floor, string water, string grass, string element, DungeonStage gamePhase, DungeonAccessibility access, SpawnList<TeamMemberSpawn> enemies, params Loc[] locs)
         {
             LoadGen layout = new LoadGen();
@@ -130,16 +173,39 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Defines the layout type for mystery passage rooms.
+        /// </summary>
         public enum MysteryRoomType
         {
+            /// <summary>Small square room layout.</summary>
             SmallSquare = 0,
+            /// <summary>Wide horizontal hallway layout.</summary>
             WideHall = 1,
+            /// <summary>Tall vertical hallway layout.</summary>
             TallHall = 2,
+            /// <summary>Large square room layout.</summary>
             BigSquare = 3,
+            /// <summary>Large tall vertical hallway layout.</summary>
             BigTallHall = 4,
+            /// <summary>Large wide horizontal hallway layout.</summary>
             BigWideHall = 5,
         }
 
+        /// <summary>
+        /// Creates a mystery passage floor generator with Unown spawns and special encounters.
+        /// Mystery passages are bonus areas with Audino for experience and rare Pokemon.
+        /// </summary>
+        /// <param name="translate">Whether to use translated/localized room names.</param>
+        /// <param name="zoneLevel">The zone level for scaling spawns.</param>
+        /// <param name="unownSpawn">String of Unown letters to spawn.</param>
+        /// <param name="stage">The dungeon difficulty stage.</param>
+        /// <param name="map_type">The mystery room layout type.</param>
+        /// <param name="moveBack">The segment offset for return stairs.</param>
+        /// <param name="unrecruitable">Whether Pokemon in this room cannot be recruited.</param>
+        /// <param name="noExp">Whether experience gain is disabled.</param>
+        /// <param name="chaserMobs">Optional hostile mob spawns that chase the player.</param>
+        /// <returns>A configured floor generator for the mystery room.</returns>
         static IFloorGen getMysteryRoom(bool translate, int zoneLevel, string unownSpawn, DungeonStage stage, MysteryRoomType map_type, int moveBack, bool unrecruitable, bool noExp, params MobSpawn[] chaserMobs)
         {
             GridFloorGen layout = new GridFloorGen();
@@ -1307,11 +1373,19 @@ namespace DataGenerator.Data
 
 
 
+        /// <summary>
+        /// Defines how a dungeon is accessed during game progression.
+        /// Controls when and how players can discover and enter the dungeon.
+        /// </summary>
         public enum DungeonAccessibility
         {
+            /// <summary>Dungeon is on the main story path and must be completed to progress.</summary>
             MainPath = 0,
+            /// <summary>Dungeon is an optional side path accessible during normal play.</summary>
             SidePath = 1,
+            /// <summary>Dungeon must be unlocked through specific conditions or events.</summary>
             Unlockable = 2,
+            /// <summary>Dungeon is hidden and requires discovery through exploration or hints.</summary>
             Hidden = 3
         }
 
@@ -2217,9 +2291,15 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Defines the environmental theme of a dungeon.
+        /// Affects which items can be found in walls and other terrain features.
+        /// </summary>
         public enum DungeonEnvironment
         {
+            /// <summary>Rocky cave environment with fossils, minerals, and geological items in walls.</summary>
             Rock,
+            /// <summary>Forest environment with natural items like berries and seeds in terrain.</summary>
             Forest
         }
 
@@ -2294,11 +2374,19 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Defines the type of shop that can appear in a dungeon.
+        /// Each shop type is run by a different Pokemon species with distinct inventory.
+        /// </summary>
         public enum ShopType
         {
+            /// <summary>Standard Kecleon shop selling general items and supplies.</summary>
             Kecleon = 0,
+            /// <summary>Shuckle shop specializing in berry products and drinks.</summary>
             Shuckle = 1,
+            /// <summary>Cleffa shop offering rare and mysterious items.</summary>
             Cleffa = 2,
+            /// <summary>Porygon shop selling technical items and machines.</summary>
             Porygon = 3
         }
 

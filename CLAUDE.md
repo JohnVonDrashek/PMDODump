@@ -2,6 +2,10 @@
 
 Open source Pokémon Mystery Dungeon roguelike built on the RogueEssence engine.
 
+## Rules
+
+- **Never commit or push without explicit user consent.** Always ask before running `git commit` or `git push`.
+
 ## Key Entry Points
 
 | Entry Point | Purpose |

@@ -17,55 +17,147 @@ using SkiaSharp;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating Pokemon species (monster) data.
+    /// Handles Pokedex entries, forms, evolutions, and species statistics.
+    /// </summary>
     public static class MonsterInfo
     {
+        /// <summary>
+        /// Defines the color classification for Pokemon as used in the Pokedex.
+        /// </summary>
         public enum DexColor
         {
+            /// <summary>
+            /// Pokemon with predominantly black coloration.
+            /// </summary>
             Black,
+            /// <summary>
+            /// Pokemon with predominantly blue coloration.
+            /// </summary>
             Blue,
+            /// <summary>
+            /// Pokemon with predominantly brown coloration.
+            /// </summary>
             Brown,
+            /// <summary>
+            /// Pokemon with predominantly gray coloration.
+            /// </summary>
             Gray,
+            /// <summary>
+            /// Pokemon with predominantly green coloration.
+            /// </summary>
             Green,
+            /// <summary>
+            /// Pokemon with predominantly pink coloration.
+            /// </summary>
             Pink,
+            /// <summary>
+            /// Pokemon with predominantly purple coloration.
+            /// </summary>
             Purple,
+            /// <summary>
+            /// Pokemon with predominantly red coloration.
+            /// </summary>
             Red,
+            /// <summary>
+            /// Pokemon with predominantly white coloration.
+            /// </summary>
             White,
+            /// <summary>
+            /// Pokemon with predominantly yellow coloration.
+            /// </summary>
             Yellow
         }
 
+        /// <summary>
+        /// Defines body shape categories for Pokemon classification in the Pokedex.
+        /// </summary>
         public enum BodyShape
         {
+            /// <summary>
+            /// Pokemon consisting primarily of a head with minimal body (e.g., Gastly, Electrode).
+            /// </summary>
             Head,
+            /// <summary>
+            /// Pokemon with a long, snake-like or eel-like body (e.g., Ekans, Dratini).
+            /// </summary>
             Serpentine,
+            /// <summary>
+            /// Pokemon with fins, typically fish-like aquatic species (e.g., Goldeen, Magikarp).
+            /// </summary>
             Fins,
+            /// <summary>
+            /// Pokemon with a head and arms but no distinct legs (e.g., Geodude, Haunter).
+            /// </summary>
             HeadAndArms,
+            /// <summary>
+            /// Pokemon with a head attached to a base or pedestal-like body (e.g., Diglett, Shuckle).
+            /// </summary>
             HeadAndBase,
+            /// <summary>
+            /// Bipedal Pokemon with a prominent tail (e.g., Charmander, Mewtwo).
+            /// </summary>
             BipedWithTail,
+            /// <summary>
+            /// Pokemon with a head and legs but minimal body (e.g., Oddish, Bellsprout).
+            /// </summary>
             HeadAndLegs,
+            /// <summary>
+            /// Four-legged Pokemon (e.g., Bulbasaur, Eevee, Arcanine).
+            /// </summary>
             Quadruped,
+            /// <summary>
+            /// Pokemon with a single pair of wings as a primary feature (e.g., Pidgey, Zubat).
+            /// </summary>
             Wings,
+            /// <summary>
+            /// Pokemon with tentacles or multiple appendages (e.g., Tentacool, Tangela).
+            /// </summary>
             Tentacles,
+            /// <summary>
+            /// Pokemon composed of multiple distinct body segments or entities (e.g., Magneton, Dugtrio).
+            /// </summary>
             MultiBody,
+            /// <summary>
+            /// Bipedal Pokemon without a prominent tail (e.g., Machop, Jynx).
+            /// </summary>
             Biped,
+            /// <summary>
+            /// Pokemon with multiple pairs of wings (e.g., Butterfree, Scyther).
+            /// </summary>
             MultiWings,
+            /// <summary>
+            /// Pokemon with insect-like or arthropod body structure (e.g., Caterpie, Weedle).
+            /// </summary>
             Insectoid
         }
 
-
+        /// <summary>Total number of Pokemon species in the Pokedex.</summary>
         const int TOTAL_DEX = 1011;
+        /// <summary>Controls whether alternate gender forms are unlocked by default.</summary>
         const bool GENDER_UNLOCK = false;
+        /// <summary>Maps language IDs to locale codes.</summary>
         static Dictionary<int, string> langIDs;
+        /// <summary>Maps language IDs to translation column indices.</summary>
         static Dictionary<int, int> langCols;
         static int[] existing = { 1, 3, 5, 6, 7, 8, 9 };
         static int[] straggler = { 11 };
         static int[] added = { 4, 12 };
         const int TOTAL_LANG_COLS = 13;
         const int ADD_VERSION_ID = 25;
+        /// <summary>Path to monster generation data files.</summary>
         public static string MONSTER_PATH { get => GenPath.DATA_GEN_PATH + "Monster/"; }
+        /// <summary>Path to the Pokedex SQLite database file.</summary>
         static string TL_FILE { get => MONSTER_PATH + "pokedex.9.sqlite"; }
 
+        /// <summary>List of monster asset key names.</summary>
         static List<string> monsterKeys;
 
+        /// <summary>
+        /// Generates and saves all Pokemon species data from the Pokedex database.
+        /// Processes forms, evolutions, stats, and localized names.
+        /// </summary>
         public static void AddMonsterData()
         {
             langIDs = new Dictionary<int, string>();
@@ -1974,12 +2066,30 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Defines the position of a Pokemon within its evolutionary family tree.
+        /// </summary>
         public enum EvoPosition
         {
+            /// <summary>
+            /// Pokemon that does not evolve and has no pre-evolutions (e.g., Tauros, Ditto).
+            /// </summary>
             SingleStage,
+            /// <summary>
+            /// First stage Pokemon in an evolutionary line (e.g., Bulbasaur, Charmander).
+            /// </summary>
             First,
+            /// <summary>
+            /// Final stage in a two-stage evolutionary line (e.g., Raichu from Pikachu).
+            /// </summary>
             LastOf2,
+            /// <summary>
+            /// Middle stage in a three-stage evolutionary line (e.g., Ivysaur, Charmeleon).
+            /// </summary>
             MidOf3,
+            /// <summary>
+            /// Final stage in a three-stage evolutionary line (e.g., Venusaur, Charizard).
+            /// </summary>
             LastOf3
         }
 

@@ -18,9 +18,19 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing optional side dungeon zone definitions.
+    /// This portion defines non-story dungeons that provide additional exploration content,
+    /// recruitable Pokemon, items, and experience for players seeking more challenges.
+    /// </summary>
     public partial class ZoneInfo
     {
-
+        /// <summary>
+        /// Populates the Bramble Woods zone data with floor layouts, spawns, and items.
+        /// Bramble Woods is an early-game optional dungeon with grass/bug type Pokemon.
+        /// </summary>
+        /// <param name="zone">The zone data object to populate.</param>
+        /// <param name="translate">Whether to use translated/localized text.</param>
         static void FillBrambleWoods(ZoneData zone, bool translate)
         {
             #region BRAMBLE WOODS

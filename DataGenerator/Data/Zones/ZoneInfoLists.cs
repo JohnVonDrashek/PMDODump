@@ -19,17 +19,32 @@ using DataGenerator.Dev;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing item and Pokemon iteration lists for procedural dungeon generation.
+    /// This portion defines enumerations and iterators for various item categories (gummis, berries, TMs, etc.)
+    /// and legendary Pokemon, as well as utility methods for localization and content list generation.
+    /// </summary>
     public partial class ZoneInfo
     {
-
+        /// <summary>
+        /// Cached dictionary of localized special text rows for translation support.
+        /// </summary>
         private static Dictionary<string, LocalText> specialRows;
 
+        /// <summary>
+        /// Initializes all localized string data from translation files.
+        /// </summary>
         public static void InitStringsAll()
         {
             specialRows = Localization.readLocalizationRows(GenPath.TL_PATH + "Special.out.txt");
         }
 
 
+        /// <summary>
+        /// Iterates through all gummi item IDs (stat-boosting candies).
+        /// </summary>
+        /// <param name="wonder">Whether to include the Wonder Gummi.</param>
+        /// <returns>Enumerable of gummi item IDs.</returns>
         static IEnumerable<string> IterateGummis(bool wonder)
         {
             if (wonder)
@@ -54,6 +69,10 @@ namespace DataGenerator.Data
             yield return "gummi_magenta";
         }
 
+        /// <summary>
+        /// Iterates through all X-item IDs (temporary stat boost consumables).
+        /// </summary>
+        /// <returns>Enumerable of X-item IDs.</returns>
         static IEnumerable<string> IterateXItems()
         {
             yield return "medicine_x_attack";
@@ -65,6 +84,10 @@ namespace DataGenerator.Data
             yield return "medicine_dire_hit";
         }
 
+        /// <summary>
+        /// Iterates through all pinch berry IDs (berries that activate at low HP).
+        /// </summary>
+        /// <returns>Enumerable of pinch berry item IDs.</returns>
         static IEnumerable<string> IteratePinchBerries()
         {
             yield return "berry_apicot";
@@ -76,6 +99,10 @@ namespace DataGenerator.Data
             yield return "berry_micle";
         }
 
+        /// <summary>
+        /// Iterates through all vitamin item IDs (permanent stat boost items).
+        /// </summary>
+        /// <returns>Enumerable of vitamin item IDs.</returns>
         static IEnumerable<string> IterateVitamins()
         {
             yield return "boost_nectar";
@@ -87,6 +114,10 @@ namespace DataGenerator.Data
             yield return "boost_carbos";
         }
 
+        /// <summary>
+        /// Iterates through all type-reducing berry IDs (berries that weaken super-effective damage).
+        /// </summary>
+        /// <returns>Enumerable of type-reducing berry item IDs.</returns>
         static IEnumerable<string> IterateTypeBerries()
         {
             yield return "berry_tanga";
@@ -109,6 +140,11 @@ namespace DataGenerator.Data
             yield return "berry_roseli";
         }
 
+        /// <summary>
+        /// Iterates through all apricorn item IDs (used to craft Poke Balls).
+        /// </summary>
+        /// <param name="plain">Whether to include the Plain Apricorn.</param>
+        /// <returns>Enumerable of apricorn item IDs.</returns>
         static IEnumerable<string> IterateApricorns(bool plain)
         {
             if (plain)
@@ -123,6 +159,10 @@ namespace DataGenerator.Data
             yield return "apricorn_black";
         }
 
+        /// <summary>
+        /// Iterates through all elemental silk item IDs (type-boosting held items).
+        /// </summary>
+        /// <returns>Enumerable of silk item IDs.</returns>
         static IEnumerable<string> IterateSilks()
         {
             yield return "xcl_element_bug_silk";
@@ -145,6 +185,14 @@ namespace DataGenerator.Data
             yield return "xcl_element_water_silk";
         }
 
+        /// <summary>
+        /// Iterates through legendary Pokemon species IDs by category.
+        /// </summary>
+        /// <param name="subLegend">Include sub-legendary Pokemon (trios, genies, etc.).</param>
+        /// <param name="oddLegend">Include Ultra Beasts and Paradox Pokemon.</param>
+        /// <param name="boxLegend">Include box art legendary Pokemon (mascots).</param>
+        /// <param name="mythical">Include mythical event Pokemon.</param>
+        /// <returns>Enumerable of legendary species IDs.</returns>
         public static IEnumerable<string> IterateLegendaries(bool subLegend = true, bool oddLegend = true, bool boxLegend = true, bool mythical = true)
         {
             if (subLegend)
@@ -380,22 +428,32 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Classification of evolution items by game progression stage.
+        /// </summary>
         [Flags]
         public enum EvoClass
         {
+            /// <summary>No evolution items.</summary>
             None = 0,
+            /// <summary>Early-game evolution items (elemental stones).</summary>
             Early = 1,
+            /// <summary>Mid-game evolution items (Sun/Moon stones, King's Rock).</summary>
             Mid = 2,
+            /// <summary>Late-game evolution items (Dawn/Dusk/Shiny stones).</summary>
             Late = 4,
+            /// <summary>End-game evolution items (trade items like Magmarizer).</summary>
             End = 8,
+            /// <summary>All evolution item classes.</summary>
             All = 15
         }
 
         /// <summary>
-        /// This does not include type boosting items that are also evo items
+        /// Iterates through evolution item IDs by progression class.
+        /// Does not include type boosting items that are also evolution items.
         /// </summary>
-        /// <param name="evoClass"></param>
-        /// <returns></returns>
+        /// <param name="evoClass">Which evolution item classes to include.</param>
+        /// <returns>Enumerable of evolution item IDs.</returns>
         public static IEnumerable<string> IterateEvoItems(EvoClass evoClass)
         {
             if ((evoClass & EvoClass.End) != EvoClass.None)
@@ -437,19 +495,35 @@ namespace DataGenerator.Data
 
 
 
+        /// <summary>
+        /// Classification of TM items by power/value tier.
+        /// </summary>
         [Flags]
         public enum TMClass
         {
+            /// <summary>No TMs.</summary>
             None = 0,
+            /// <summary>Top-tier TMs (powerful moves like Earthquake, Hyper Beam).</summary>
             Top = 1,
+            /// <summary>Mid-tier TMs (solid utility and damage moves).</summary>
             Mid = 2,
+            /// <summary>Bottom-tier TMs (weaker or situational moves).</summary>
             Bottom = 4,
+            /// <summary>Starter-tier TMs (basic moves for early game).</summary>
             Starter = 8,
+            /// <summary>All naturally spawning TM tiers.</summary>
             Natural = 15,
+            /// <summary>TMs only available in shops.</summary>
             ShopOnly = 16,
+            /// <summary>All TM classes including shop-only.</summary>
             All = 31
         }
 
+        /// <summary>
+        /// Iterates through TM item IDs by power tier.
+        /// </summary>
+        /// <param name="tmClass">Which TM tiers to include.</param>
+        /// <returns>Enumerable of TM item IDs.</returns>
         public static IEnumerable<string> IterateTMs(TMClass tmClass)
         {
             if ((tmClass & TMClass.Top) != TMClass.None)
@@ -599,20 +673,37 @@ namespace DataGenerator.Data
 
 
 
+        /// <summary>
+        /// Classification of TM items by distribution rarity (how many Pokemon can learn them).
+        /// </summary>
         [Flags]
         public enum TMDistroClass
         {
+            /// <summary>No TMs.</summary>
             None = 0,
+            /// <summary>Universal TMs learnable by almost all Pokemon.</summary>
             Universal = 1,
+            /// <summary>High distribution TMs learnable by many Pokemon.</summary>
             High = 2,
+            /// <summary>Medium distribution TMs.</summary>
             Medium = 4,
+            /// <summary>Low distribution TMs learnable by few Pokemon.</summary>
             Low = 8,
+            /// <summary>All non-universal naturally spawning TMs.</summary>
             Ordinary = 14,
+            /// <summary>All naturally spawning TM distribution classes.</summary>
             Natural = 15,
+            /// <summary>TMs only available in shops.</summary>
             ShopOnly = 16,
+            /// <summary>All non-universal TMs.</summary>
             NonUniversal = 30,
         }
 
+        /// <summary>
+        /// Iterates through TM item IDs by distribution rarity.
+        /// </summary>
+        /// <param name="tmClass">Which distribution classes to include.</param>
+        /// <returns>Enumerable of TM item IDs.</returns>
         static IEnumerable<string> IterateDistroTMs(TMDistroClass tmClass)
         {
             if ((tmClass & TMDistroClass.Universal) != TMDistroClass.None)

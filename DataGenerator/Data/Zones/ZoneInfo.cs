@@ -18,10 +18,35 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Primary data generator class for procedural dungeon zones in Pokemon Mystery Dungeon.
+    /// This partial class spans multiple files and contains all zone/dungeon definitions,
+    /// helper methods for floor generation, spawn tables, and item/enemy configuration.
+    /// </summary>
+    /// <remarks>
+    /// Zone data is split across multiple partial class files:
+    /// - ZoneInfo.cs: Main entry points and story dungeon definitions
+    /// - ZoneInfoHelpers.cs: Utility methods for common floor generation patterns
+    /// - ZoneInfoLists.cs: Item and Pokemon iteration lists
+    /// - ZoneInfoTables.cs: Spawn tables and special room generation
+    /// - ZoneInfoPostgame.cs: Post-credits dungeon definitions
+    /// - ZoneInfoChallenge.cs: Challenge mode dungeon definitions
+    /// - ZoneInfoBase.cs: Debug and base zone definitions
+    /// - ZoneInfoRogue.cs: Roguelike mode dungeon definitions
+    /// - ZoneInfoOptional.cs: Optional side dungeon definitions
+    /// </remarks>
     public partial class ZoneInfo
     {
+        /// <summary>
+        /// Maximum number of zone slots available in the game.
+        /// </summary>
         public const int MAX_ZONES = 55;
 
+        /// <summary>
+        /// Generates and saves zone data to disk.
+        /// </summary>
+        /// <param name="translate">Whether to use translated/localized text.</param>
+        /// <param name="zonesToAdd">Specific zone indices to generate, or empty to generate all zones.</param>
         public static void AddZoneData(bool translate, params int[] zonesToAdd)
         {
             if (translate)
@@ -49,6 +74,12 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Retrieves zone data for a specific zone index.
+        /// </summary>
+        /// <param name="index">The zone index to retrieve (0 to MAX_ZONES-1).</param>
+        /// <param name="translate">Whether to use translated/localized text.</param>
+        /// <returns>A fully configured ZoneData object for the requested zone.</returns>
         public static ZoneData GetZoneData(int index, bool translate)
         {
             ZoneData zone = new ZoneData();

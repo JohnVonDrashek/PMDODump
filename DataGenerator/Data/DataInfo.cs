@@ -14,13 +14,25 @@ using RogueEssence.LevelGen;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides core data generation utilities including universal events, type matchups,
+    /// system effects, and file management operations.
+    /// </summary>
     public static class DataInfo
     {
+        /// <summary>No effect type matchup constant.</summary>
         public const int N_E = PreTypeEvent.N_E;
+        /// <summary>Not very effective type matchup constant.</summary>
         public const int NVE = PreTypeEvent.NVE;
+        /// <summary>Normal effectiveness type matchup constant.</summary>
         public const int NRM = PreTypeEvent.NRM;
+        /// <summary>Super effective type matchup constant.</summary>
         public const int S_E = PreTypeEvent.S_E;
 
+        /// <summary>
+        /// Creates and saves the universal event configuration.
+        /// Includes hit tracking, type matchups, mobility rules, and global game mechanics.
+        /// </summary>
         public static void AddUniversalEvent()
         {
             File.Delete(PathMod.ModPath(DataManager.DATA_PATH + "Universal" + DataManager.DATA_EXT));
@@ -112,6 +124,9 @@ namespace DataGenerator.Data
             DataManager.SaveData(universalEvent, DataManager.DATA_PATH, "Universal", DataManager.DATA_EXT);
         }
 
+        /// <summary>
+        /// Creates and saves a minimal universal event configuration for testing.
+        /// </summary>
         public static void AddMinUniversalEvent()
         {
             File.Delete(PathMod.ModPath(DataManager.DATA_PATH + "Universal" + DataManager.DATA_EXT));
@@ -120,6 +135,9 @@ namespace DataGenerator.Data
             DataManager.SaveData(universalEvent, DataManager.DATA_PATH, "Universal", DataManager.DATA_EXT);
         }
 
+        /// <summary>
+        /// Creates and saves universal base data including rarity and monster feature configurations.
+        /// </summary>
         public static void AddUniversalData()
         {
             File.Delete(PathMod.ModPath(DataManager.MISC_PATH + "Index" + DataManager.DATA_EXT));
@@ -129,6 +147,10 @@ namespace DataGenerator.Data
             DataManager.SaveData(baseData, DataManager.MISC_PATH, "Index", DataManager.DATA_EXT);
         }
 
+        /// <summary>
+        /// Creates and saves editor operations for character sheet manipulation.
+        /// Includes animation generation, alignment, mirroring, and offset operations.
+        /// </summary>
         public static void AddEditorOps()
         {
             DeleteData(Path.Combine(PathMod.RESOURCE_PATH, "Extensions"));
@@ -155,6 +177,10 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Creates and saves system visual and sound effects.
+        /// Includes healing, PP restoration, warping, and other common battle effects.
+        /// </summary>
         public static void AddSystemFX()
         {
             DeleteData(PathMod.ModPath(DataManager.FX_PATH));
@@ -311,6 +337,9 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Creates and saves minimal system effects for testing.
+        /// </summary>
         public static void AddMinSystemFX()
         {
             DeleteData(PathMod.ModPath(DataManager.FX_PATH));
@@ -364,10 +393,19 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Deletes all files in an indexed data subdirectory.
+        /// </summary>
+        /// <param name="subPath">The subdirectory name within the data path.</param>
         public static void DeleteIndexedData(string subPath)
         {
             DeleteData(PathMod.ModPath(DataManager.DATA_PATH + subPath));
         }
+
+        /// <summary>
+        /// Deletes all files in the specified directory.
+        /// </summary>
+        /// <param name="path">The full path to the directory to clear.</param>
         public static void DeleteData(string path)
         {
             string[] filePaths = Directory.GetFiles(path);

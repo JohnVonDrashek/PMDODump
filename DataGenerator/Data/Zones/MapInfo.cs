@@ -18,12 +18,21 @@ using PMDC.Data;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Contains data and generation methods for pre-designed maps (non-procedural).
+    /// These include boss arenas, hub areas, camp sites, and other fixed-layout locations.
+    /// </summary>
     public class MapInfo
     {
-
+        /// <summary>
+        /// Array of all pre-designed map identifiers that can be generated.
+        /// </summary>
         public static string[] MapNames = { "test_grounds", "base_camp", "base_camp_2", "forest_camp", "cliff_camp",
             "canyon_camp", "rest_stop", "final_stop", "guildmaster_summit", "guild_path", "guild_hut", "luminous_spring", "post_office" };
 
+        /// <summary>
+        /// Generates and saves all pre-designed maps to disk.
+        /// </summary>
         public static void AddMapData()
         {
             //DataInfo.DeleteData(PathMod.ModPath(DataManager.MAP_PATH));
@@ -34,6 +43,10 @@ namespace DataGenerator.Data
                     DataManager.SaveData(data, DataManager.MAP_PATH, MapNames[ii], DataManager.MAP_EXT);
             }
         }
+        /// <summary>
+        /// Generates and saves a specific pre-designed map to disk.
+        /// </summary>
+        /// <param name="name">The map identifier to generate.</param>
         public static void AddMapData(string name)
         {
             Map data = GetMapData(name);
@@ -42,15 +55,36 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Sets a tile at the specified coordinates in a dungeon Map.
+        /// </summary>
+        /// <param name="map">The map to modify.</param>
+        /// <param name="xx">The x-coordinate of the tile.</param>
+        /// <param name="yy">The y-coordinate of the tile.</param>
+        /// <param name="val">The tile type ID to set.</param>
         private static void SetObstacle(Map map, int xx, int yy, string val)
         {
             map.Tiles[xx][yy] = new Tile(val, new Loc(xx, yy));
         }
+
+        /// <summary>
+        /// Sets an obstacle at the specified coordinates in a GroundMap.
+        /// </summary>
+        /// <param name="map">The ground map to modify.</param>
+        /// <param name="xx">The x-coordinate of the obstacle.</param>
+        /// <param name="yy">The y-coordinate of the obstacle.</param>
+        /// <param name="val">The obstacle value to set.</param>
         private static void SetObstacle(GroundMap map, int xx, int yy, uint val)
         {
             map.SetObstacle(xx, yy, val);
         }
 
+        /// <summary>
+        /// Retrieves the map data for a pre-designed map by name.
+        /// Creates the map layout including tiles, entry points, and boss encounters.
+        /// </summary>
+        /// <param name="name">The map identifier.</param>
+        /// <returns>The configured Map object, or null if the name is not recognized.</returns>
         public static Map GetMapData(string name)
         {
             Map map = new Map();

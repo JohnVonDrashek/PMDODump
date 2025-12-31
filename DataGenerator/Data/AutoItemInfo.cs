@@ -17,126 +17,464 @@ using RogueEssence.Script;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Defines special effects that can be applied to exclusive items.
+    /// These effects provide unique bonuses based on Pokemon type, stats, or game mechanics.
+    /// Star ratings (1*-5*) indicate effect rarity/power level.
+    /// </summary>
     public enum ExclusiveItemEffect
     {
+        /// <summary>
+        /// No special effect applied to the item.
+        /// </summary>
         None,
-        TypeStatBonus,//1*
-        TypeSpeedBoost,//3*
-        TypeGroupWeaknessReduce,//5*
-        TypeBulldozer,//4*
-        SuperCrit,//3*
-        NVECrit,//2*
-        Nontraitor,//1*
-        WaterTerrain,//2*
-        LavaTerrain,//2*
-        AllTerrain,//4*
-        Wallbreaker,//5* breaks walls with MOVES
-        GapFiller,//5* fills gaps with MOVES
-        PPBoost,//2*
-        DeepBreather,//1*
-        PracticeSwinger,//1*
-        MisfortuneMirror,//1*
-        CounterBasher,//3* reflects all normal attacks and projectiles
-        DoubleAttacker,//2*
-        MasterHurler,//2* longtoss+pierce
-        AllyReviver,//5* occurs on floor start
-        AllyReviverBattle,//5* occurs on defeating a foe
-        PressurePlus,//3*
-        StatusOnAttack,//3* can inflict status with normal attack (and projectile?): self and foe
-        KnockbackOnAttack,//3*
-        ThrowOnAttack,//3*
-        SureHitAttacker,//1*
-        SpecialAttacker,//1*
-        StatusImmune,//3*
-        StatDropImmune,//2*
-        SleepWalker,//2* can walk while asleep!
-        ChargeWalker,//3* can walk while charging!
-        StairSensor,//4* diagonals are better approximated...
-        AcuteSniffer,//2*
-        MapSurveyor,//5* nerfed in some way- reveals layout within 20 tiles away
-        XRay,//5*
-        WeaknessPayback,//4* inflict status
-        WarpPayback,//4* warp
-        LungeAttack,//3*
-        WideAttack,//2*
-        ExplosiveAttack,//5*
-        TrapBuster,//4* destroy traps when attacking
-        ExplosionGuard,//3*
-        WandMaster,//4* wands become arc throw
-        WandSpread,//5* wands spread out
-        MultiRayShot,//5* turns linear projectiles into multi-ray projectiles at the cost of destroying them
-        RoyalVeil,//4* restores others' HP when at full HP
-                  //more effects that work on allies...
-        Celebrate,//4* extra turn after defeating an enemy
-        Absorption,//3* restore HP after defeating an enemy
-        ExcessiveForce,//3* deal AOE damage after defeating an enemy
-        Anchor,//1*
-        BarrageGuard,//2*
-        BetterOdds,//3* cannot miss and will crit if all moves have the same PP
-        ClutchPerformer,//4* dodges moves in a pinch
-        DistanceDodge,//4* dodges faraway moves
-        CloseDodge,//4* dodges close-up moves
-        FastHealer,//5*
-        SelfCurer,//3*
-        StatusMirror,//3* gives status (not stats) to the target in front.  only curable status and transferrable status
-        StatMirror,//2*
-        ErraticAttacker,//2*
-        ErraticDefender,//2*
-        FastFriend,//2* meta-effect; make exceptions for this
-        CoinWatcher,//3* meta-effect; make exceptions for this
-        HiddenStairFinder,//3* meta-effect; make exceptions for this
-        ChestFinder,//3* meta-effect; make exceptions for this
-        ShopFinder,//3* meta-effect; make exceptions for this
-        SecondSTAB,//5* increase the power of X-type moves
-        TypedAttack,//4* changes regular attack to user's type
-        GapProber,//1*
-        PassThroughAttacker,//1*
+        /// <summary>
+        /// Boosts a specific stat for Pokemon of a certain type. Rarity: 1*.
+        /// </summary>
+        TypeStatBonus,
+        /// <summary>
+        /// Increases movement speed for Pokemon of a certain type. Rarity: 3*.
+        /// </summary>
+        TypeSpeedBoost,
+        /// <summary>
+        /// Reduces damage from weaknesses for a type group. Rarity: 5*.
+        /// </summary>
+        TypeGroupWeaknessReduce,
+        /// <summary>
+        /// Allows certain type Pokemon to destroy terrain obstacles. Rarity: 4*.
+        /// </summary>
+        TypeBulldozer,
+        /// <summary>
+        /// Greatly increases critical hit ratio. Rarity: 3*.
+        /// </summary>
+        SuperCrit,
+        /// <summary>
+        /// Allows critical hits even on not-very-effective moves. Rarity: 2*.
+        /// </summary>
+        NVECrit,
+        /// <summary>
+        /// Prevents the Pokemon from being a traitor in missions. Rarity: 1*.
+        /// </summary>
+        Nontraitor,
+        /// <summary>
+        /// Allows movement across water terrain. Rarity: 2*.
+        /// </summary>
+        WaterTerrain,
+        /// <summary>
+        /// Allows movement across lava terrain. Rarity: 2*.
+        /// </summary>
+        LavaTerrain,
+        /// <summary>
+        /// Allows movement across all terrain types. Rarity: 4*.
+        /// </summary>
+        AllTerrain,
+        /// <summary>
+        /// Breaks walls when using moves. Rarity: 5*.
+        /// </summary>
+        Wallbreaker,
+        /// <summary>
+        /// Fills gaps in terrain when using moves. Rarity: 5*.
+        /// </summary>
+        GapFiller,
+        /// <summary>
+        /// Increases maximum PP for all moves. Rarity: 2*.
+        /// </summary>
+        PPBoost,
+        /// <summary>
+        /// Restores PP when the Pokemon takes a deep breath (waits). Rarity: 1*.
+        /// </summary>
+        DeepBreather,
+        /// <summary>
+        /// Increases accuracy when repeatedly using the same move. Rarity: 1*.
+        /// </summary>
+        PracticeSwinger,
+        /// <summary>
+        /// Reflects bad luck effects back to the source. Rarity: 1*.
+        /// </summary>
+        MisfortuneMirror,
+        /// <summary>
+        /// Reflects all normal attacks and projectiles back to attackers. Rarity: 3*.
+        /// </summary>
+        CounterBasher,
+        /// <summary>
+        /// Allows attacking twice in a single turn. Rarity: 2*.
+        /// </summary>
+        DoubleAttacker,
+        /// <summary>
+        /// Thrown items travel farther and pierce through targets. Rarity: 2*.
+        /// </summary>
+        MasterHurler,
+        /// <summary>
+        /// Revives fainted allies at the start of each floor. Rarity: 5*.
+        /// </summary>
+        AllyReviver,
+        /// <summary>
+        /// Revives fainted allies upon defeating a foe. Rarity: 5*.
+        /// </summary>
+        AllyReviverBattle,
+        /// <summary>
+        /// Enhanced Pressure ability effect, draining more PP from opponents. Rarity: 3*.
+        /// </summary>
+        PressurePlus,
+        /// <summary>
+        /// Normal attacks and projectiles can inflict a status condition. Rarity: 3*.
+        /// </summary>
+        StatusOnAttack,
+        /// <summary>
+        /// Normal attacks knock back the target. Rarity: 3*.
+        /// </summary>
+        KnockbackOnAttack,
+        /// <summary>
+        /// Normal attacks throw the target backward. Rarity: 3*.
+        /// </summary>
+        ThrowOnAttack,
+        /// <summary>
+        /// Normal attacks never miss. Rarity: 1*.
+        /// </summary>
+        SureHitAttacker,
+        /// <summary>
+        /// Normal attacks use Special Attack instead of Attack. Rarity: 1*.
+        /// </summary>
+        SpecialAttacker,
+        /// <summary>
+        /// Grants immunity to certain status conditions. Rarity: 3*.
+        /// </summary>
+        StatusImmune,
+        /// <summary>
+        /// Prevents stat reductions from opponent moves. Rarity: 2*.
+        /// </summary>
+        StatDropImmune,
+        /// <summary>
+        /// Allows movement and action while asleep. Rarity: 2*.
+        /// </summary>
+        SleepWalker,
+        /// <summary>
+        /// Allows movement while charging a move. Rarity: 3*.
+        /// </summary>
+        ChargeWalker,
+        /// <summary>
+        /// Reveals the location of stairs on the floor. Rarity: 4*.
+        /// </summary>
+        StairSensor,
+        /// <summary>
+        /// Reveals the location of items on the floor. Rarity: 2*.
+        /// </summary>
+        AcuteSniffer,
+        /// <summary>
+        /// Reveals floor layout within 20 tiles. Rarity: 5*.
+        /// </summary>
+        MapSurveyor,
+        /// <summary>
+        /// Reveals enemies and items through walls. Rarity: 5*.
+        /// </summary>
+        XRay,
+        /// <summary>
+        /// Inflicts a status condition when hit by a super-effective move. Rarity: 4*.
+        /// </summary>
+        WeaknessPayback,
+        /// <summary>
+        /// Warps the attacker away when hit by a super-effective move. Rarity: 4*.
+        /// </summary>
+        WarpPayback,
+        /// <summary>
+        /// Normal attacks move the user forward one tile. Rarity: 3*.
+        /// </summary>
+        LungeAttack,
+        /// <summary>
+        /// Normal attacks hit in a wider arc. Rarity: 2*.
+        /// </summary>
+        WideAttack,
+        /// <summary>
+        /// Normal attacks cause explosions. Rarity: 5*.
+        /// </summary>
+        ExplosiveAttack,
+        /// <summary>
+        /// Destroys traps when attacking them. Rarity: 4*.
+        /// </summary>
+        TrapBuster,
+        /// <summary>
+        /// Protects against explosion damage. Rarity: 3*.
+        /// </summary>
+        ExplosionGuard,
+        /// <summary>
+        /// Wand projectiles travel in an arc instead of straight. Rarity: 4*.
+        /// </summary>
+        WandMaster,
+        /// <summary>
+        /// Wand effects spread to adjacent tiles. Rarity: 5*.
+        /// </summary>
+        WandSpread,
+        /// <summary>
+        /// Linear projectiles become multi-ray shots but are consumed. Rarity: 5*.
+        /// </summary>
+        MultiRayShot,
+        /// <summary>
+        /// Restores nearby allies' HP when the user is at full HP. Rarity: 4*.
+        /// </summary>
+        RoyalVeil,
+        /// <summary>
+        /// Grants an extra turn after defeating an enemy. Rarity: 4*.
+        /// </summary>
+        Celebrate,
+        /// <summary>
+        /// Restores HP after defeating an enemy. Rarity: 3*.
+        /// </summary>
+        Absorption,
+        /// <summary>
+        /// Deals area-of-effect damage after defeating an enemy. Rarity: 3*.
+        /// </summary>
+        ExcessiveForce,
+        /// <summary>
+        /// Prevents forced movement and knockback effects. Rarity: 1*.
+        /// </summary>
+        Anchor,
+        /// <summary>
+        /// Reduces damage from multi-hit moves. Rarity: 2*.
+        /// </summary>
+        BarrageGuard,
+        /// <summary>
+        /// Guarantees hits and critical hits when all moves have equal PP. Rarity: 3*.
+        /// </summary>
+        BetterOdds,
+        /// <summary>
+        /// Dodges attacks when HP is critically low. Rarity: 4*.
+        /// </summary>
+        ClutchPerformer,
+        /// <summary>
+        /// Dodges attacks from distant enemies. Rarity: 4*.
+        /// </summary>
+        DistanceDodge,
+        /// <summary>
+        /// Dodges attacks from adjacent enemies. Rarity: 4*.
+        /// </summary>
+        CloseDodge,
+        /// <summary>
+        /// Increases natural HP recovery rate. Rarity: 5*.
+        /// </summary>
+        FastHealer,
+        /// <summary>
+        /// Automatically cures status conditions over time. Rarity: 3*.
+        /// </summary>
+        SelfCurer,
+        /// <summary>
+        /// Transfers curable status conditions to the target in front. Rarity: 3*.
+        /// </summary>
+        StatusMirror,
+        /// <summary>
+        /// Copies stat changes to the target in front. Rarity: 2*.
+        /// </summary>
+        StatMirror,
+        /// <summary>
+        /// Attack damage varies randomly. Rarity: 2*.
+        /// </summary>
+        ErraticAttacker,
+        /// <summary>
+        /// Incoming damage varies randomly. Rarity: 2*.
+        /// </summary>
+        ErraticDefender,
+        /// <summary>
+        /// Increases recruitment rate for wild Pokemon. Rarity: 2*. Meta-effect.
+        /// </summary>
+        FastFriend,
+        /// <summary>
+        /// Increases money found on the floor. Rarity: 3*. Meta-effect.
+        /// </summary>
+        CoinWatcher,
+        /// <summary>
+        /// Reveals hidden stairs on the floor. Rarity: 3*. Meta-effect.
+        /// </summary>
+        HiddenStairFinder,
+        /// <summary>
+        /// Reveals treasure chests on the floor. Rarity: 3*. Meta-effect.
+        /// </summary>
+        ChestFinder,
+        /// <summary>
+        /// Reveals shops on the floor. Rarity: 3*. Meta-effect.
+        /// </summary>
+        ShopFinder,
+        /// <summary>
+        /// Grants STAB bonus for a second type's moves. Rarity: 5*.
+        /// </summary>
+        SecondSTAB,
+        /// <summary>
+        /// Changes normal attack type to match the user's type. Rarity: 4*.
+        /// </summary>
+        TypedAttack,
+        /// <summary>
+        /// Normal attacks can hit through gaps in terrain. Rarity: 1*.
+        /// </summary>
+        GapProber,
+        /// <summary>
+        /// Normal attacks pass through targets to hit enemies behind. Rarity: 1*.
+        /// </summary>
+        PassThroughAttacker,
+        /// <summary>
+        /// Protects against weather-based damage.
+        /// </summary>
         WeatherProtection,
+        /// <summary>
+        /// Normal attacks can remove the target's ability.
+        /// </summary>
         RemoveAbilityAttack,
+        /// <summary>
+        /// Restores HP when eating berries, similar to the Cheek Pouch ability.
+        /// </summary>
         CheekPouch,
+        /// <summary>
+        /// Gradually restores HP while standing in water.
+        /// </summary>
         HealInWater,
+        /// <summary>
+        /// Gradually restores HP while standing in lava.
+        /// </summary>
         HealInLava,
+        /// <summary>
+        /// Restores HP when entering a new floor.
+        /// </summary>
         HealOnNewFloor,
+        /// <summary>
+        /// Survives a fatal hit from moves of a certain category with 1 HP.
+        /// </summary>
         EndureCategory,
+        /// <summary>
+        /// Survives a fatal hit from moves of a certain type with 1 HP.
+        /// </summary>
         EndureType,
+        /// <summary>
+        /// Drops spike traps when hit by attacks.
+        /// </summary>
         SpikeDropper,
+        /// <summary>
+        /// Prevents status conditions during certain weather.
+        /// </summary>
         NoStatusInWeather,
-        DeepBreatherPlus,//3*
-        WeaknessReduce,//5*
-        Gratitude,//2*
-        HitAndRun,//2*
-        StatusOnCategoryHit,//3*
-        StatusOnCategoryUse,//5*
-        MapStatusOnCategoryUse,//5*
-        DoubleDash,//4*
-        StatusSplash,//5*
-        DevolveOnAttack,//3* can inflict devolve with normal attack (and projectile?): self and foe
-        ProjectileAttack,//4*
-        MetronomePlus,//5*
-        AttackRangeInWeather,//4*
+        /// <summary>
+        /// Enhanced deep breathing that restores more PP. Rarity: 3*.
+        /// </summary>
+        DeepBreatherPlus,
+        /// <summary>
+        /// Reduces damage from super-effective moves. Rarity: 5*.
+        /// </summary>
+        WeaknessReduce,
+        /// <summary>
+        /// Boosts stats when healed by an ally. Rarity: 2*.
+        /// </summary>
+        Gratitude,
+        /// <summary>
+        /// Allows retreating after attacking without counterattack. Rarity: 2*.
+        /// </summary>
+        HitAndRun,
+        /// <summary>
+        /// Inflicts status when hitting with moves of a certain category. Rarity: 3*.
+        /// </summary>
+        StatusOnCategoryHit,
+        /// <summary>
+        /// Inflicts status when using moves of a certain category. Rarity: 5*.
+        /// </summary>
+        StatusOnCategoryUse,
+        /// <summary>
+        /// Applies a map-wide status when using moves of a certain category. Rarity: 5*.
+        /// </summary>
+        MapStatusOnCategoryUse,
+        /// <summary>
+        /// Can dash twice the normal distance. Rarity: 4*.
+        /// </summary>
+        DoubleDash,
+        /// <summary>
+        /// Status conditions splash to adjacent enemies. Rarity: 5*.
+        /// </summary>
+        StatusSplash,
+        /// <summary>
+        /// Normal attacks can devolve the target. Rarity: 3*.
+        /// </summary>
+        DevolveOnAttack,
+        /// <summary>
+        /// Normal attacks become projectiles. Rarity: 4*.
+        /// </summary>
+        ProjectileAttack,
+        /// <summary>
+        /// Enhances the Metronome move with better outcomes. Rarity: 5*.
+        /// </summary>
+        MetronomePlus,
+        /// <summary>
+        /// Increases attack range during certain weather. Rarity: 4*.
+        /// </summary>
+        AttackRangeInWeather,
+        /// <summary>
+        /// Reduces PP consumption for moves.
+        /// </summary>
         PPSaver,
+        /// <summary>
+        /// Cures status conditions when defeating an enemy.
+        /// </summary>
         CelebrateCure,
+        /// <summary>
+        /// Protects allies of a certain type from damage.
+        /// </summary>
         TypeBodyguard,
+        /// <summary>
+        /// Boosts stats when using moves of a certain category.
+        /// </summary>
         StatOnCategoryUse,
+        /// <summary>
+        /// Inflicts status when hit by moves of a certain type.
+        /// </summary>
         StatusOnTypeHit,
+        /// <summary>
+        /// Restores HP and PP while sleeping.
+        /// </summary>
         SweetDreams,
+        /// <summary>
+        /// Has a chance to inflict status when hit by moves of a certain type.
+        /// </summary>
         ChanceStatusOnTypeHit,
+        /// <summary>
+        /// Has a chance to boost stats when hit by moves of a certain type.
+        /// </summary>
         ChanceStatOnTypeHit,
+        /// <summary>
+        /// Has a chance to inflict status when hit by moves of a certain category.
+        /// </summary>
         ChanceStatusOnCategoryHit,
+        /// <summary>
+        /// Changes moves of a certain type to a different damage category.
+        /// </summary>
         TypeBecomesCategory,
+        /// <summary>
+        /// Has a chance to dodge super-effective moves.
+        /// </summary>
         WeaknessDodge,
+        /// <summary>
+        /// Reveals heart-shaped items on the floor.
+        /// </summary>
         HeartFinder,
+        /// <summary>
+        /// Inflicts a status condition when defeating an enemy.
+        /// </summary>
         CelebrateStatus
     }
+
+    /// <summary>
+    /// Provides methods for auto-generating exclusive item data.
+    /// Handles item naming, effects, and localization for Pokemon-specific equipment.
+    /// </summary>
     public class AutoItemInfo
     {
-
+        /// <summary>All loaded localization strings indexed by language code.</summary>
         private static Dictionary<string, Dictionary<string, string>> stringsAll;
+        /// <summary>Special localization rows for unique items.</summary>
         private static Dictionary<string, LocalText> specialRows;
+        /// <summary>Localization rows for specific named items.</summary>
         private static Dictionary<string, LocalText> specificItemRows;
+        /// <summary>Localization rows for exclusive item type names.</summary>
         private static Dictionary<string, LocalText> itemTypeRows;
+        /// <summary>Localization rows for exclusive item effect descriptions.</summary>
         private static Dictionary<string, LocalText> itemEffectRows;
 
+        /// <summary>
+        /// Initializes all localization string dictionaries from resource files.
+        /// Must be called before generating translated item data.
+        /// </summary>
         public static void InitStringsAll()
         {
             stringsAll = new Dictionary<string, Dictionary<string, string>>();
@@ -165,7 +503,12 @@ namespace DataGenerator.Data
         //when it comes to custom specific item names,
         //it will go through all item names in the specific item range and print to list only if the exclusive item type is none
 
-
+        /// <summary>
+        /// Gets a localized name expression for an exclusive item type.
+        /// </summary>
+        /// <param name="type">The exclusive item type.</param>
+        /// <param name="translate">If true, returns translated text; otherwise returns English with type name.</param>
+        /// <returns>A LocalText containing the formatted item type name.</returns>
         public static LocalText GetLocalExpression(ExclusiveItemType type, bool translate)
         {
             if (!translate)
@@ -180,6 +523,10 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Creates content lists for item types, effects, and related game data.
+        /// Used for generating documentation and validation of item configurations.
+        /// </summary>
         public static void CreateContentLists()
         {
             List<string> itemTypes = new List<string>();

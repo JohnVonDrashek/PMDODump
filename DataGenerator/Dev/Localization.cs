@@ -18,8 +18,27 @@ using DataGenerator.Data;
 
 namespace DataGenerator.Dev
 {
+    /// <summary>
+    /// Provides methods for exporting and importing localization string tables.
+    /// Handles translation workflows for game data including items, skills, zones, and other content.
+    /// </summary>
+    /// <remarks>
+    /// The localization workflow involves:
+    /// <list type="number">
+    /// <item><description>Export: Print* methods generate tab-separated files with English text and existing translations</description></item>
+    /// <item><description>Translate: External tools process the exported files and produce *.out.txt files with translations</description></item>
+    /// <item><description>Import: Write* methods read the *.out.txt files and update the game data with new translations</description></item>
+    /// </list>
+    /// </remarks>
     public static class Localization
     {
+        /// <summary>
+        /// Exports the exclusive item type names to a localization file.
+        /// </summary>
+        /// <remarks>
+        /// Iterates through all <see cref="ExclusiveItemType"/> enum values and outputs their
+        /// localized name expressions for translation.
+        /// </remarks>
         public static void PrintExclusiveNameStringTable()
         {
             string path = GenPath.TL_PATH + "ExclusiveItemType.txt";
@@ -39,6 +58,13 @@ namespace DataGenerator.Dev
             printLocalizationRows(path, languages, orderedKeys, rows);
         }
 
+        /// <summary>
+        /// Exports the exclusive item effect descriptions to a localization file.
+        /// </summary>
+        /// <remarks>
+        /// Iterates through all <see cref="ExclusiveItemEffect"/> enum values and outputs their
+        /// generated descriptions for translation.
+        /// </remarks>
         public static void PrintExclusiveDescStringTable()
         {
             string path = GenPath.TL_PATH + "ExclusiveItemEffect.txt";
@@ -70,17 +96,38 @@ namespace DataGenerator.Dev
         //finally, delete the english descriptions
         //when importing, must first run a macro on the spreadsheet that erases all highlighted translations.
 
+        /// <summary>
+        /// Exports a string table for data types that have only a name (no description).
+        /// </summary>
+        /// <param name="dataType">The type of data to export (e.g., Element, Rank, AI).</param>
+        /// <param name="getData">A delegate function to retrieve data entries by key.</param>
         public static void PrintNamedStringTable(DataManager.DataType dataType, GetNamedData getData)
         {
             printNamedDataTable(GenPath.TL_PATH + dataType.ToString() + ".txt", DataManager.Instance.DataIndices[dataType], getData);
         }
 
+        /// <summary>
+        /// Exports a string table for data types that have both a name and description.
+        /// </summary>
+        /// <param name="dataType">The type of data to export (e.g., Skill, Intrinsic, Status).</param>
+        /// <param name="getData">A delegate function to retrieve described data entries by key.</param>
         public static void PrintDescribedStringTable(DataManager.DataType dataType, GetDescribedData getData)
         {
             printDescribedDataTable(GenPath.TL_PATH + dataType.ToString() + ".txt", DataManager.Instance.DataIndices[dataType], getData);
         }
 
-        
+        /// <summary>
+        /// Exports the item string table with special handling for various item types.
+        /// </summary>
+        /// <remarks>
+        /// Handles special cases:
+        /// <list type="bullet">
+        /// <item><description>Skips blank entries and TM items (auto-generated names)</description></item>
+        /// <item><description>Skips auto-calculated exclusive item names</description></item>
+        /// <item><description>Skips all exclusive item descriptions (always auto-calculated)</description></item>
+        /// <item><description>Detects and warns about duplicate item names</description></item>
+        /// </list>
+        /// </remarks>
         public static void PrintItemStringTable()
         {
             DataManager.DataType dataType = DataManager.DataType.Item;
@@ -123,12 +170,26 @@ namespace DataGenerator.Dev
             printLocalizationRows(path, languages, orderedKeys, rows);
         }
 
-
+        /// <summary>
+        /// Delegate for retrieving entry data by string key.
+        /// </summary>
+        /// <param name="index">The string key identifying the data entry.</param>
+        /// <returns>The entry data for the specified key.</returns>
         public delegate IEntryData GetNamedData(string index);
 
+        /// <summary>
+        /// Delegate for retrieving described data (with name and description) by string key.
+        /// </summary>
+        /// <param name="index">The string key identifying the data entry.</param>
+        /// <returns>The described data for the specified key.</returns>
         public delegate IDescribedData GetDescribedData(string index);
 
-
+        /// <summary>
+        /// Writes a localization table for named data entries to the specified path.
+        /// </summary>
+        /// <param name="path">The output file path.</param>
+        /// <param name="index">The data index containing entry metadata.</param>
+        /// <param name="method">The delegate to retrieve individual data entries.</param>
         private static void printNamedDataTable(string path, EntryDataIndex index, GetNamedData method)
         {
             Dictionary<string, (string, LocalText)> rows = new Dictionary<string, (string, LocalText)>();
@@ -181,14 +242,22 @@ namespace DataGenerator.Dev
         }
 
 
+        /// <summary>
+        /// Delegate for retrieving titled data (maps, ground maps) by filename.
+        /// </summary>
+        /// <param name="filename">The filename (without extension) identifying the data entry.</param>
+        /// <returns>The entry data for the specified filename.</returns>
         public delegate IEntryData GetTitledData(string filename);
 
         /// <summary>
-        /// Maps/GroundMaps are types with name and title card, so a common function is used to handle them.
+        /// Exports a string table for titled data types like maps and ground maps.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="total"></param>
-        /// <param name="method"></param>
+        /// <param name="dir">The directory containing the data files.</param>
+        /// <param name="ext">The file extension to filter by.</param>
+        /// <param name="method">The delegate to retrieve individual data entries.</param>
+        /// <remarks>
+        /// Titled data types have a name and title card. The output is sorted alphabetically by key.
+        /// </remarks>
         public static void PrintTitledDataTable(string dir, string ext, GetTitledData method)
         {
             string path = GenPath.TL_PATH + (new DirectoryInfo(dir)).Name + ".txt";
@@ -212,11 +281,12 @@ namespace DataGenerator.Dev
         }
 
         /// <summary>
-        /// Zone data is an exceptional case where the names and the floor naming patterns must be translated
+        /// Exports the zone string table including zone names and floor naming patterns.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="entryNames"></param>
-        /// <param name="method"></param>
+        /// <remarks>
+        /// Zone data is an exceptional case that includes both zone names and floor naming patterns
+        /// from <see cref="FloorNameIDZoneStep"/> steps within each zone segment.
+        /// </remarks>
         public static void PrintZoneStringTable()
         {
             string path = GenPath.TL_PATH + "Zone.txt";
@@ -253,6 +323,15 @@ namespace DataGenerator.Dev
             printLocalizationRows(path, languages, orderedKeys, rows);
         }
 
+        /// <summary>
+        /// Updates the working lists used during localization export.
+        /// </summary>
+        /// <param name="rows">Dictionary mapping keys to comment and LocalText pairs.</param>
+        /// <param name="orderedKeys">List maintaining insertion order of keys.</param>
+        /// <param name="languages">Set of all encountered language codes.</param>
+        /// <param name="key">The unique key for this localization entry.</param>
+        /// <param name="comment">An optional comment for translators.</param>
+        /// <param name="val">The LocalText containing the default text and existing translations.</param>
         private static void updateWorkingLists(Dictionary<string, (string, LocalText)> rows, List<string> orderedKeys, HashSet<string> languages, string key, string comment, LocalText val)
         {
             foreach (string language in val.LocalTexts.Keys)
@@ -261,6 +340,17 @@ namespace DataGenerator.Dev
             orderedKeys.Add(key);
         }
 
+        /// <summary>
+        /// Writes the collected localization rows to a tab-separated file.
+        /// </summary>
+        /// <param name="path">The output file path.</param>
+        /// <param name="languages">Set of language codes to include as columns.</param>
+        /// <param name="orderedKeys">Keys in the order they should appear in the file.</param>
+        /// <param name="rows">Dictionary mapping keys to comment and LocalText pairs.</param>
+        /// <remarks>
+        /// Output format: Key, Comment, EN (default text), then one column per additional language.
+        /// Newlines in text are escaped as \n.
+        /// </remarks>
         private static void printLocalizationRows(string path, HashSet<string> languages, List<string> orderedKeys, Dictionary<string, (string, LocalText)> rows)
         {
             using (StreamWriter file = new StreamWriter(path))
@@ -301,6 +391,15 @@ namespace DataGenerator.Dev
 
         //write backs
 
+        /// <summary>
+        /// Imports translations for titled data (maps, ground maps) from a localization file.
+        /// </summary>
+        /// <param name="path">The directory containing the data files.</param>
+        /// <param name="ext">The file extension to filter by.</param>
+        /// <param name="method">The delegate to retrieve individual data entries.</param>
+        /// <remarks>
+        /// Reads from [DirectoryName].out.txt and updates the corresponding data files.
+        /// </remarks>
         public static void WriteTitledDataTable(string path, string ext, GetTitledData method)
         {
             string filename = (new DirectoryInfo(path)).Name;
@@ -319,6 +418,14 @@ namespace DataGenerator.Dev
             }
         }
 
+        /// <summary>
+        /// Imports translations for named data types from a localization file.
+        /// </summary>
+        /// <param name="dataType">The type of data to import translations for.</param>
+        /// <remarks>
+        /// Reads from [DataType].out.txt and updates the corresponding data files.
+        /// Only updates entries that have non-empty default names.
+        /// </remarks>
         public static void WriteNamedDataTable(DataManager.DataType dataType)
         {
 
@@ -341,6 +448,15 @@ namespace DataGenerator.Dev
             }
         }
 
+        /// <summary>
+        /// Copies the name from one data entry to another within the same data type.
+        /// </summary>
+        /// <param name="dataType">The type of data being copied.</param>
+        /// <param name="from">The source entry key to copy from.</param>
+        /// <param name="to">The destination entry key to copy to.</param>
+        /// <remarks>
+        /// Used for cases like copying "shiny" skin name to "shiny_square".
+        /// </remarks>
         public static void CopyNamedData(DataManager.DataType dataType, string from, string to)
         {
             string fromDir = PathMod.NoMod(DataManager.DATA_PATH + dataType.ToString() + "/" + from + DataManager.DATA_EXT);
@@ -353,6 +469,14 @@ namespace DataGenerator.Dev
             DataManager.SaveObject(toData, toDir);
         }
 
+        /// <summary>
+        /// Imports translations for described data types (with name and description) from a localization file.
+        /// </summary>
+        /// <param name="dataType">The type of data to import translations for.</param>
+        /// <remarks>
+        /// Reads from [DataType].out.txt and updates the corresponding data files.
+        /// Only updates entries that have non-empty default names.
+        /// </remarks>
         public static void WriteDescribedDataTable(DataManager.DataType dataType)
         {
 
@@ -374,6 +498,17 @@ namespace DataGenerator.Dev
             }
         }
 
+        /// <summary>
+        /// Imports translations for items with special handling for auto-generated content.
+        /// </summary>
+        /// <remarks>
+        /// Handles special cases:
+        /// <list type="bullet">
+        /// <item><description>TM items: Auto-generates name and description from skill translations</description></item>
+        /// <item><description>Exclusive items: Skipped (handled by AddCalculatedItemData)</description></item>
+        /// <item><description>Regular items: Imports name and description directly</description></item>
+        /// </list>
+        /// </remarks>
         public static void WriteItemStringTable()
         {
             DataManager.DataType dataType = DataManager.DataType.Item;
@@ -447,6 +582,12 @@ namespace DataGenerator.Dev
             }
         }
 
+        /// <summary>
+        /// Imports translations for zones including zone names and floor naming patterns.
+        /// </summary>
+        /// <remarks>
+        /// Updates both the zone name and any FloorNameIDZoneStep names found in zone segments.
+        /// </remarks>
         public static void WriteZoneStringTable()
         {
             DataManager.DataType dataType = DataManager.DataType.Zone;
@@ -479,6 +620,15 @@ namespace DataGenerator.Dev
             }
         }
 
+        /// <summary>
+        /// Reads a localization file and returns a dictionary of LocalText entries.
+        /// </summary>
+        /// <param name="path">The path to the localization file (typically *.out.txt).</param>
+        /// <returns>A dictionary mapping keys to LocalText objects containing all translations.</returns>
+        /// <remarks>
+        /// Expected file format: Tab-separated with columns: Key, Comment, EN, [other languages].
+        /// The first row is a header containing language codes.
+        /// </remarks>
         public static Dictionary<string, LocalText> readLocalizationRows(string path)
         {
             Dictionary<string, LocalText> rows = new Dictionary<string, LocalText>();

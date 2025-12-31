@@ -12,10 +12,17 @@ using RogueEssence.Script;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating game item data.
+    /// Includes consumables, held items, TMs, orbs, and exclusive equipment.
+    /// </summary>
     public class ItemInfo
     {
+        /// <summary>Maximum number of standard (non-exclusive) items.</summary>
         public const int MAX_NORMAL_ITEMS = 700;
+        /// <summary>Starting index for exclusive items.</summary>
         public const int MAX_INIT_EXCL_ITEMS = 900;
+        /// <summary>Maximum total number of items including exclusives.</summary>
         public const int MAX_ITEMS = 2500;
 
         /// <summary>
@@ -34,6 +41,9 @@ namespace DataGenerator.Data
             AddExclItemData(false);
         }
 
+        /// <summary>
+        /// Generates minimal item data for testing with only the first item.
+        /// </summary>
         public static void AddMinItemData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.Item.ToString());
@@ -55,6 +65,11 @@ namespace DataGenerator.Data
             AddExclItemData(true);
         }
 
+        /// <summary>
+        /// Retrieves item data for a specific index.
+        /// </summary>
+        /// <param name="ii">The item index to retrieve.</param>
+        /// <returns>A tuple containing the file name and the ItemData object.</returns>
         public static (string, ItemData) GetItemData(int ii)
         {
             string fileName = "";

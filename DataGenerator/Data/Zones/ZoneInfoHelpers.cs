@@ -19,6 +19,11 @@ using System.Linq;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Partial class containing helper methods for procedural dungeon generation.
+    /// This portion defines priority constants for map generation steps and utility methods
+    /// for adding common floor elements like spawns, traps, terrain, and layout configurations.
+    /// </summary>
     public partial class ZoneInfo
     {
         //GUIDE TO MAP GENERATION PRIORITY:
@@ -93,18 +98,38 @@ namespace DataGenerator.Data
         //7 debug checks
         static readonly Priority PR_DBG_CHECK = new Priority(7);
 
+        /// <summary>
+        /// Adds a title drop animation step to the map layout that displays the floor name when entering.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
         public static void AddTitleDrop<T>(MapGen<T> layout) where T : BaseMapGenContext
         {
             MapTitleDropStep<T> fade = new MapTitleDropStep<T>(new Priority(-15));
             layout.GenSteps.Add(PR_FLOOR_DATA, fade);
         }
 
+        /// <summary>
+        /// Adds basic floor data including music, time limit, and sight ranges to the map layout.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="music">The music track filename to play on this floor.</param>
+        /// <param name="timeLimit">The time limit in game ticks. Use -1 for no limit.</param>
+        /// <param name="tileSight">The visibility range for tiles.</param>
+        /// <param name="charSight">The visibility range for characters.</param>
         public static void AddFloorData<T>(MapGen<T> layout, string music, int timeLimit, Map.SightRange tileSight, Map.SightRange charSight) where T : BaseMapGenContext
         {
             MapDataStep<T> floorData = new MapDataStep<T>(music, timeLimit, tileSight, charSight);
             layout.GenSteps.Add(PR_FLOOR_DATA, floorData);
         }
 
+        /// <summary>
+        /// Adds fake item mechanics to the floor, causing certain items to transform into enemies when interacted with.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="spawnTable">Dictionary mapping fake item types to the mob that spawns when triggered.</param>
         public static void AddFloorFakeItems<T>(MapGen<T> layout, Dictionary<ItemFake, MobSpawn> spawnTable) where T : BaseMapGenContext
         {
             MapEffectStep<T> fake = new MapEffectStep<T>();
@@ -114,6 +139,12 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_FLOOR_DATA, fake);
         }
 
+        /// <summary>
+        /// Adds items spread across multiple floors in a zone according to a spread plan.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="spreadPlan">The plan controlling how items are distributed across floors.</param>
+        /// <param name="items">The items to spread, each with equal spawn weight.</param>
         public static void AddItemSpreadZoneStep(ZoneSegmentBase floorSegment, SpreadPlanBase spreadPlan, params MapItem[] items)
         {
             SpawnList<MapItem> zoneSpawns = new SpawnList<MapItem>();
@@ -122,6 +153,12 @@ namespace DataGenerator.Data
             AddItemSpreadZoneStep(floorSegment, spreadPlan, zoneSpawns);
         }
 
+        /// <summary>
+        /// Adds items spread across multiple floors in a zone according to a spread plan with custom spawn weights.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="spreadPlan">The plan controlling how items are distributed across floors.</param>
+        /// <param name="items">The weighted spawn list of items to distribute.</param>
         public static void AddItemSpreadZoneStep(ZoneSegmentBase floorSegment, SpreadPlanBase spreadPlan, SpawnList<MapItem> items)
         {
             SpawnList<IGenStep> zoneSpawns = new SpawnList<IGenStep>();
@@ -131,13 +168,25 @@ namespace DataGenerator.Data
             floorSegment.ZoneSteps.Add(zoneStep);
         }
 
+        /// <summary>
+        /// Defines the layout type for evolution altar rooms.
+        /// </summary>
         public enum EvoRoomType
         {
+            /// <summary>Standard-sized evolution room.</summary>
             Normal,
+            /// <summary>Compact evolution room for smaller dungeons.</summary>
             Small,
+            /// <summary>Diamond-shaped evolution room layout.</summary>
             Diamond
         }
 
+        /// <summary>
+        /// Adds evolution altar rooms spread across a zone according to a spread plan.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="spreadPlan">The plan controlling how evolution rooms are distributed.</param>
+        /// <param name="roomType">The visual layout type for the evolution room.</param>
         public static void AddEvoZoneStep(ZoneSegmentBase floorSegment, SpreadPlanBase spreadPlan, EvoRoomType roomType)
         {
             SpreadRoomZoneStep evoZoneStep = new SpreadRoomZoneStep(PR_GRID_GEN_EXTRA, PR_ROOMS_GEN_EXTRA, spreadPlan);
@@ -171,6 +220,12 @@ namespace DataGenerator.Data
             floorSegment.ZoneSteps.Add(evoZoneStep);
         }
 
+        /// <summary>
+        /// Adds hidden secret stairs spread across a zone that lead to a different segment.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="spreadPlan">The plan controlling how hidden stairs are distributed.</param>
+        /// <param name="segDiff">The relative segment index offset for the destination.</param>
         public static void AddHiddenStairStep(ZoneSegmentBase floorSegment, SpreadPlanBase spreadPlan, int segDiff)
         {
             SpawnRangeList<IGenStep> exitZoneSpawns = new SpawnRangeList<IGenStep>();
@@ -183,6 +238,13 @@ namespace DataGenerator.Data
             floorSegment.ZoneSteps.Add(exitZoneStep);
         }
 
+        /// <summary>
+        /// Adds mysteriosity events spread across a zone that can teleport players to mystery areas.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="spreadPlan">The plan controlling how mysteriosity events are distributed.</param>
+        /// <param name="baseChance">Base percentage chance for the mysteriosity event to trigger.</param>
+        /// <param name="segDiff">The relative segment index offset for the mystery destination.</param>
         public static void AddMysteriosityZoneStep(ZoneSegmentBase floorSegment, SpreadPlanBase spreadPlan, int baseChance, int segDiff)
         {
             SpawnRangeList<IGenStep> exitZoneSpawns = new SpawnRangeList<IGenStep>();
@@ -191,18 +253,45 @@ namespace DataGenerator.Data
             floorSegment.ZoneSteps.Add(exitZoneStep);
         }
 
+        /// <summary>
+        /// Adds a roaming legendary Pokemon encounter that appears on a specific floor.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="floorNum">The floor number where the legendary can appear.</param>
+        /// <param name="saveVar">The save variable that tracks if this legendary was encountered/captured.</param>
+        /// <param name="species">The species ID of the legendary Pokemon.</param>
+        /// <param name="move1">First move ID.</param>
+        /// <param name="move2">Second move ID.</param>
+        /// <param name="move3">Third move ID.</param>
+        /// <param name="move4">Fourth move ID.</param>
+        /// <param name="item">The boost item the legendary holds.</param>
         public static void AddRoamingLegendZoneStep(ZoneSegmentBase floorSegment, int floorNum, string saveVar, string species, string move1, string move2, string move3, string move4, string item)
         {
             SpawnRangeList<IGenStep> roamingZoneSpawns = new SpawnRangeList<IGenStep>();
             floorSegment.ZoneSteps.Add(new ScriptZoneStep("RoamingLegend", "{ FloorNum=" + floorNum + ", SaveVar=\"" + saveVar + "\", ActionScript=\"AllyInteract\", Species=\"" + species + "\", Move1=\"" + move1 + "\", Move2=\"" + move2 + "\", Move3=\"" + move3 + "\", Move4=\"" + move4 + "\", BoostItem=\"" + item + "\" }"));
         }
 
+        /// <summary>
+        /// Adds a hidden legendary Pokemon encounter that appears on a specific floor.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="floorNum">The floor number where the legendary can appear.</param>
+        /// <param name="saveVar">The save variable that tracks if this legendary was encountered/captured.</param>
+        /// <param name="species">The species ID of the legendary Pokemon.</param>
         public static void AddHiddenLegendZoneStep(ZoneSegmentBase floorSegment, int floorNum, string saveVar, string species)
         {
             SpawnRangeList<IGenStep> roamingZoneSpawns = new SpawnRangeList<IGenStep>();
             floorSegment.ZoneSteps.Add(new ScriptZoneStep("HiddenLegend", "{ FloorNum=" + floorNum + ", SaveVar=\"" + saveVar + "\", ActionScript=\"AllyInteract\", Species=\"" + species + "\" }"));
         }
 
+        /// <summary>
+        /// Adds move tutor NPCs spread across a zone that teach moves of specified elemental types.
+        /// </summary>
+        /// <param name="floorSegment">The zone segment to add the step to.</param>
+        /// <param name="spreadPlan">The plan controlling how tutors are distributed.</param>
+        /// <param name="cost">The cost range for tutor services.</param>
+        /// <param name="tutorElements">List of elemental type IDs the tutor can teach moves for.</param>
+        /// <param name="discriminator">Optional identifier to distinguish between multiple tutor spawns.</param>
         public static void AddTutorZoneStep(ZoneSegmentBase floorSegment, SpreadPlanBase spreadPlan, IntRange cost, List<string> tutorElements, int discriminator = 0)
         {
             RandBag<IGenStep> npcZoneSpawns = new RandBag<IGenStep>();
@@ -227,6 +316,16 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_FLOOR_DATA, statusData);
         }
 
+        /// <summary>
+        /// Adds texture/tileset data to the map layout for visual rendering.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="block">The tileset ID for wall/block tiles.</param>
+        /// <param name="ground">The tileset ID for floor tiles.</param>
+        /// <param name="water">The tileset ID for water/liquid tiles.</param>
+        /// <param name="element">The elemental type of the floor terrain.</param>
+        /// <param name="layered">Whether to use layered ground rendering.</param>
         public static void AddTextureData<T>(MapGen<T> layout, string block, string ground, string water, string element, bool layered = false) where T : BaseMapGenContext
         {
             MapTextureStep<T> textureStep = new MapTextureStep<T>();
@@ -240,6 +339,16 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_TEXTURES, textureStep);
         }
 
+        /// <summary>
+        /// Adds specific texture/tileset data to the map layout with additional grass terrain support.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="block">The tileset ID for wall/block tiles.</param>
+        /// <param name="ground">The tileset ID for floor tiles.</param>
+        /// <param name="water">The tileset ID for water/liquid tiles.</param>
+        /// <param name="grass">The tileset ID for grass tiles.</param>
+        /// <param name="element">The elemental type of the floor terrain.</param>
         public static void AddSpecificTextureData<T>(MapGen<T> layout, string block, string ground, string water, string grass, string element) where T : BaseMapGenContext
         {
             MapDictTextureStep<T> textureStep = new MapDictTextureStep<T>();
@@ -260,12 +369,27 @@ namespace DataGenerator.Data
 
         }
 
+        /// <summary>
+        /// Adds enemy respawn configuration to the map layout.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="maxFoes">Maximum number of enemies allowed on the floor at once.</param>
+        /// <param name="respawnTime">Time in game ticks between enemy respawns.</param>
         public static void AddRespawnData<T>(MapGen<T> layout, int maxFoes, int respawnTime) where T : BaseMapGenContext
         {
             MobSpawnSettingsStep<T> spawnStep = new MobSpawnSettingsStep<T>(new Priority(15), new RespawnFromEligibleEvent(maxFoes, respawnTime));
             layout.GenSteps.Add(PR_RESPAWN_MOB, spawnStep);
         }
 
+        /// <summary>
+        /// Adds enemy respawn configuration with radius-based spawning around the player.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="radius">The radius around the player where enemies can spawn.</param>
+        /// <param name="maxFoes">Maximum number of enemies allowed on the floor at once.</param>
+        /// <param name="respawnTime">Time in game ticks between enemy respawns.</param>
         public static void AddRadiusRespawnData<T>(MapGen<T> layout, int radius, int maxFoes, int respawnTime) where T : BaseMapGenContext
         {
             RespawnFromRandomEvent respawn = new RespawnFromRandomEvent(maxFoes, respawnTime);
@@ -274,6 +398,13 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_RESPAWN_MOB, spawnStep);
         }
 
+        /// <summary>
+        /// Adds enemy despawn configuration that removes enemies outside a radius from the player.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="radius">The radius beyond which enemies will despawn.</param>
+        /// <param name="despawnTime">Time in game ticks before enemies outside radius despawn.</param>
         public static void AddRadiusDespawnData<T>(MapGen<T> layout, int radius, int despawnTime) where T : BaseMapGenContext
         {
             DespawnRadiusEvent despawn = new DespawnRadiusEvent(radius, despawnTime);
@@ -282,6 +413,14 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_RESPAWN_MOB, spawnStep);
         }
 
+        /// <summary>
+        /// Adds initial enemy spawn configuration to the map layout.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="clumpFactor">How much enemies tend to spawn in groups (0-100).</param>
+        /// <param name="amount">The random range for number of enemies to spawn.</param>
+        /// <param name="connectivity">Which room types enemies can spawn in.</param>
         public static void AddEnemySpawnData<T>(MapGen<T> layout, int clumpFactor, RandRange amount, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             PlaceRandomMobsStep<T> mobStep = new PlaceRandomMobsStep<T>(new TeamContextSpawner<T>(amount));
@@ -291,6 +430,13 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_MOBS, mobStep);
         }
 
+        /// <summary>
+        /// Adds initial enemy spawn configuration with radius-based placement.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="radius">The radius within which enemies spawn relative to the entrance.</param>
+        /// <param name="amount">The random range for number of enemies to spawn.</param>
         public static void AddRadiusEnemySpawnData<T>(MapGen<T> layout, int radius, RandRange amount) where T : ListMapGenContext
         {
             PlaceRadiusMobsStep<T> mobStep = new PlaceRadiusMobsStep<T>(new TeamContextSpawner<T>(amount));
@@ -298,6 +444,12 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_MOBS, mobStep);
         }
 
+        /// <summary>
+        /// Creates a money spawn zone step with amounts scaled by dungeon level.
+        /// </summary>
+        /// <param name="level">The dungeon level used to calculate money amounts.</param>
+        /// <param name="floors_in">Number of floors into the dungeon, used for scaling.</param>
+        /// <returns>A configured MoneySpawnZoneStep for the zone.</returns>
         public static MoneySpawnZoneStep GetMoneySpawn(int level, int floors_in)
         {
             RandRange addRange = new RandRange(level * 2 / 5, level * 2 / 5 + 4);
@@ -305,11 +457,28 @@ namespace DataGenerator.Data
             return new MoneySpawnZoneStep(PR_RESPAWN_MONEY, startRange, addRange);
         }
 
+        /// <summary>
+        /// Creates an item spawner that generates species-specific items for legendary Pokemon.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="subLegend">Include sub-legendary Pokemon (trio masters, etc.).</param>
+        /// <param name="boxLegend">Include box legendary Pokemon (mascots).</param>
+        /// <param name="mythical">Include mythical Pokemon.</param>
+        /// <returns>A configured spawner for legendary species items.</returns>
         public static SpeciesItemListSpawner<T> GetLegendaryItemSpawner<T>(bool subLegend, bool boxLegend, bool mythical) where T : BaseMapGenContext
         {
             return GetLegendaryItemSpawner<T>(subLegend, boxLegend, mythical, new RandRange(1));
         }
 
+        /// <summary>
+        /// Creates an item spawner that generates species-specific items for legendary Pokemon with custom count.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="subLegend">Include sub-legendary Pokemon (trio masters, etc.).</param>
+        /// <param name="boxLegend">Include box legendary Pokemon (mascots).</param>
+        /// <param name="mythical">Include mythical Pokemon.</param>
+        /// <param name="rand">The random range for number of items to spawn.</param>
+        /// <returns>A configured spawner for legendary species items.</returns>
         public static SpeciesItemListSpawner<T> GetLegendaryItemSpawner<T>(bool subLegend, bool boxLegend, bool mythical, RandRange rand) where T : BaseMapGenContext
         {
             SpeciesItemListSpawner<T> spawn = new SpeciesItemListSpawner<T>(new IntRange(1), rand);
@@ -320,6 +489,14 @@ namespace DataGenerator.Data
             return spawn;
         }
 
+        /// <summary>
+        /// Adds money spawn configuration to the map layout.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="divAmount">The random range for money pile divisions.</param>
+        /// <param name="includeHalls">Whether to allow money spawns in hallways.</param>
+        /// <param name="connectivity">Which room types money can spawn in.</param>
         public static void AddMoneyData<T>(MapGen<T> layout, RandRange divAmount, bool includeHalls = false, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.None) where T : ListMapGenContext
         {
             TerminalSpawnStep<T, MoneySpawn> moneyStep = new TerminalSpawnStep<T, MoneySpawn>(new MoneyDivSpawner<T>(divAmount), includeHalls);
@@ -328,6 +505,15 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_MONEY, moneyStep);
         }
 
+        /// <summary>
+        /// Adds money trail spawns that lead to terminal items.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="trailLength">The random range for trail length in tiles.</param>
+        /// <param name="placementValue">The value range for money placed along the trail.</param>
+        /// <param name="terminalSpawn">The spawner for the item at the end of the trail.</param>
+        /// <param name="connectivity">Which room types trails can spawn in.</param>
         public static void AddMoneyTrails<T>(MapGen<T> layout, RandRange trailLength, IntRange placementValue, IStepSpawner<T, MapItem> terminalSpawn, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.None) where T : MapGenContext
         {
             MoneyTrailSpawnStep<T, MapItem> moneyStep = new MoneyTrailSpawnStep<T, MapItem>(terminalSpawn, trailLength, placementValue);
@@ -336,6 +522,15 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_MONEY, moneyStep);
         }
 
+        /// <summary>
+        /// Adds item spawn configuration to the map layout.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="amount">The random range for number of items to spawn.</param>
+        /// <param name="successPercent">Percentage chance for each spawn attempt to succeed.</param>
+        /// <param name="includeHalls">Whether to allow item spawns in hallways.</param>
+        /// <param name="connectivity">Which room types items can spawn in.</param>
         public static void AddItemData<T>(MapGen<T> layout, RandRange amount, int successPercent, bool includeHalls = false, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             DueSpawnStep<T, InvItem, MapGenEntrance> itemStep = new DueSpawnStep<T, InvItem, MapGenEntrance>(new ContextSpawner<T, InvItem>(amount), successPercent, includeHalls);
@@ -345,6 +540,17 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Adds the initialization step for grid-based map generation.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="cellX">Number of cells horizontally in the grid.</param>
+        /// <param name="cellY">Number of cells vertically in the grid.</param>
+        /// <param name="cellWidth">Width of each cell in tiles.</param>
+        /// <param name="cellHeight">Height of each cell in tiles.</param>
+        /// <param name="thickness">Wall thickness between cells.</param>
+        /// <param name="wrap">Whether the map wraps around edges.</param>
         public static void AddInitGridStep<T>(MapGen<T> layout, int cellX, int cellY, int cellWidth, int cellHeight, int thickness = 1, bool wrap = false) where T : MapGenContext
         {
             InitGridPlanStep<T> startGen = new InitGridPlanStep<T>(thickness);
@@ -359,6 +565,14 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_GRID_INIT, startGen);
         }
 
+        /// <summary>
+        /// Adds the initialization step for list-based (freeform) map generation.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="width">Width of the map in tiles.</param>
+        /// <param name="height">Height of the map in tiles.</param>
+        /// <param name="wrap">Whether the map wraps around edges.</param>
         public static void AddInitListStep<T>(MapGen<T> layout, int width, int height, bool wrap = false) where T : ListMapGenContext
         {
             InitFloorPlanStep<T> startGen = new InitFloorPlanStep<T>();
@@ -368,6 +582,11 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_ROOMS_INIT, startGen);
         }
 
+        /// <summary>
+        /// Adds drawing steps to convert a grid floor plan into actual tile data.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
         public static void AddDrawGridSteps<T>(MapGen<T> layout) where T : MapGenContext
         {
             //init from floor plan
@@ -376,6 +595,11 @@ namespace DataGenerator.Data
             AddDrawListSteps(layout);
         }
 
+        /// <summary>
+        /// Adds drawing steps to convert a list floor plan into actual tile data.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
         public static void AddDrawListSteps<T>(MapGen<T> layout) where T : ListMapGenContext
         {
             //draw paths
@@ -518,6 +742,16 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Adds a single type of trap tile spread across the map.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="amount">The random range for number of traps to spawn.</param>
+        /// <param name="id">The trap tile ID to spawn.</param>
+        /// <param name="revealed">Whether traps are visible or hidden.</param>
+        /// <param name="includeHalls">Whether to allow trap spawns in hallways.</param>
+        /// <param name="connectivity">Which room types traps can spawn in.</param>
         public static void AddSingleTrapStep<T>(MapGen<T> layout, RandRange amount, string id, bool revealed = true, bool includeHalls = false, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             SpawnList<EffectTile> effectTileSpawns = new SpawnList<EffectTile>();
@@ -528,6 +762,14 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_TRAPS, trapStep);
         }
 
+        /// <summary>
+        /// Adds trap spawns using the floor's configured trap pool.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="amount">The random range for number of traps to spawn.</param>
+        /// <param name="includeHalls">Whether to allow trap spawns in hallways.</param>
+        /// <param name="connectivity">Which room types traps can spawn in.</param>
         public static void AddTrapsSteps<T>(MapGen<T> layout, RandRange amount, bool includeHalls = false, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             RandomRoomSpawnStep<T, EffectTile> trapStep = new RandomRoomSpawnStep<T, EffectTile>(new ContextSpawner<T, EffectTile>(amount), 100, includeHalls);
@@ -536,6 +778,15 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_TRAPS, trapStep);
         }
 
+        /// <summary>
+        /// Adds trap spawns from a custom weighted list of trap types.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="amount">The random range for number of traps to spawn.</param>
+        /// <param name="effectTileSpawns">Weighted list of trap types to spawn.</param>
+        /// <param name="includeHalls">Whether to allow trap spawns in hallways.</param>
+        /// <param name="connectivity">Which room types traps can spawn in.</param>
         public static void AddTrapListStep<T>(MapGen<T> layout, RandRange amount, SpawnList<EffectTile> effectTileSpawns, bool includeHalls = false, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             RandomRoomSpawnStep<T, EffectTile> trapStep = new RandomRoomSpawnStep<T, EffectTile>(new PickerSpawner<T, EffectTile>(new LoopedRand<EffectTile>(effectTileSpawns, amount)), 100, includeHalls);
@@ -544,6 +795,14 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_TRAPS, trapStep);
         }
 
+        /// <summary>
+        /// Adds trap spawns arranged in patterns loaded from pattern plans.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="amount">The random range for number of patterns to spawn.</param>
+        /// <param name="planSpawns">Weighted list of pattern plans to use.</param>
+        /// <param name="connectivity">Which room types patterns can spawn in.</param>
         public static void AddTrapPatternSteps<T>(MapGen<T> layout, RandRange amount, SpawnList<PatternPlan> planSpawns, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             PatternSpawnStep<T, EffectTile> trapStep = new PatternSpawnStep<T, EffectTile>();
@@ -560,6 +819,16 @@ namespace DataGenerator.Data
             layout.GenSteps.Add(PR_SPAWN_TRAPS, trapStep);
         }
 
+        /// <summary>
+        /// Adds trap spawns with sweep placement (no spacing constraints).
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="layout">The map generation layout to add the step to.</param>
+        /// <param name="amount">The random range for number of traps to spawn.</param>
+        /// <param name="id">The trap tile ID to spawn.</param>
+        /// <param name="revealed">Whether traps are visible or hidden.</param>
+        /// <param name="includeHalls">Whether to allow trap spawns in hallways.</param>
+        /// <param name="connectivity">Which room types traps can spawn in.</param>
         public static void AddTrapSweepStep<T>(MapGen<T> layout, RandRange amount, string id, bool revealed = true, bool includeHalls = false, ConnectivityRoom.Connectivity connectivity = ConnectivityRoom.Connectivity.Main) where T : ListMapGenContext
         {
             SpawnList<EffectTile> effectTileSpawns = new SpawnList<EffectTile>();
@@ -627,6 +896,12 @@ namespace DataGenerator.Data
         }
 
 
+        /// <summary>
+        /// Creates a specific room generator from an ASCII art string array.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="level">ASCII art representation where # is wall, ~ is water, ^ is lava, _ is pit, X is unbreakable.</param>
+        /// <returns>A room generator configured with the specified tile layout.</returns>
         public static RoomGenSpecific<T> CreateRoomGenSpecific<T>(string[] level) where T : class, ITiledGenContext
         {
             RoomGenSpecific<T> roomGen = new RoomGenSpecific<T>(level[0].Length, level.Length, new Tile(DataManager.Instance.GenFloor));
@@ -653,6 +928,13 @@ namespace DataGenerator.Data
             return roomGen;
         }
 
+        /// <summary>
+        /// Creates a boss room step with treasure room and connecting hallways.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="bossRooms">Random picker for boss room layouts.</param>
+        /// <param name="bossIndex">Index identifier for the boss room.</param>
+        /// <returns>A configured boss room step.</returns>
         public static AddBossRoomStep<T> CreateGenericBossRoomStep<T>(IRandPicker<RoomGen<T>> bossRooms, int bossIndex = 0) where T : ListMapGenContext
         {
             SpawnList<RoomGen<T>> treasureRooms = new SpawnList<RoomGen<T>>();
@@ -677,6 +959,16 @@ namespace DataGenerator.Data
             return detours;
         }
 
+        /// <summary>
+        /// Creates a boss battle room generator from an ASCII art layout with boss spawns.
+        /// </summary>
+        /// <typeparam name="T">The map generation context type.</typeparam>
+        /// <param name="id">Identifier for the boss room (used for file output).</param>
+        /// <param name="level">ASCII art representation of the room layout.</param>
+        /// <param name="trigger">Location of the boss trigger tile.</param>
+        /// <param name="mobs">List of boss mob spawns.</param>
+        /// <param name="severe">Whether to use the more intense boss music.</param>
+        /// <returns>A room generator configured for boss battles.</returns>
         public static RoomGenSpecific<T> CreateRoomGenSpecificBoss<T>(string id, string[] level, Loc trigger, List<MobSpawn> mobs, bool severe) where T : ListMapGenContext
         {
             RoomGenSpecificBoss<T> roomGen = new RoomGenSpecificBoss<T>(level[0].Length, level.Length, new Tile(DataManager.Instance.GenFloor), "tile_boss", trigger, severe ? "Boss Battle 2.ogg" : "Boss Battle.ogg");
@@ -705,6 +997,11 @@ namespace DataGenerator.Data
             return roomGen;
         }
 
+        /// <summary>
+        /// Creates a room generator with post-processing masks from an ASCII art layout.
+        /// </summary>
+        /// <param name="level">ASCII art representation of the room layout.</param>
+        /// <returns>A room generator with post-processing tile masks configured.</returns>
         public static RoomGenPostProcSpecific<MapGenContext> CreateRoomGenPostProcSpecific(string[] level)
         {
             RoomGenPostProcSpecific<MapGenContext> roomGen = new RoomGenPostProcSpecific<MapGenContext>(level[0].Length, level.Length, new Tile(DataManager.Instance.GenFloor));

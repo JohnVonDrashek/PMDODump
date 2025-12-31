@@ -11,10 +11,20 @@ using static RogueEssence.Data.TerrainData;
 
 namespace DataGenerator.Data
 {
+    /// <summary>
+    /// Provides methods for generating map-wide status effect data.
+    /// Includes weather effects (rain, sun, sandstorm, etc.) and floor-wide conditions.
+    /// </summary>
     public static class MapStatusInfo
     {
+        /// <summary>
+        /// Maximum number of map status effects available.
+        /// </summary>
         public const int MAX_MAP_STATUSES = 50;
 
+        /// <summary>
+        /// Generates and saves all map status effect data entries.
+        /// </summary>
         public static void AddMapStatusData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.MapStatus.ToString());
@@ -26,6 +36,9 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Generates minimal map status data for testing with only the first status.
+        /// </summary>
         public static void AddMinMapStatusData()
         {
             DataInfo.DeleteIndexedData(DataManager.DataType.MapStatus.ToString());
@@ -37,6 +50,11 @@ namespace DataGenerator.Data
             }
         }
 
+        /// <summary>
+        /// Retrieves the map status effect data for a specific index.
+        /// </summary>
+        /// <param name="ii">The map status index to retrieve.</param>
+        /// <returns>A MapStatusData object containing the status configuration.</returns>
         public static MapStatusData GetMapStatusData(int ii)
         {
             MapStatusData status = new MapStatusData();
