@@ -145,8 +145,98 @@ Requires: `uv pip install -r Scripts/requirements.txt`
 | DumpAsset | https://github.com/audinowho/DumpAsset.git |
 | RawAsset | https://github.com/PMDCollab/RawAsset.git |
 
+## macOS Development Setup (Apple Silicon)
+
+### Prerequisites
+
+```bash
+brew install dotnet@8 sdl2 lua@5.4 cmake
+```
+
+### Clone and Build PMDC
+
+```bash
+# Clone PMDC engine
+git clone https://github.com/PMDCollab/PMDC.git ~/code/PMDC
+cd ~/code/PMDC
+git submodule update --init --recursive
+
+# Build game
+dotnet restore PMDC.sln
+dotnet build PMDC/PMDC.csproj -c Release
+```
+
+### Build Native Libraries (FNA3D, FAudio)
+
+FNA requires native libraries built from source on macOS:
+
+```bash
+# Clone fnalibs-apple-builder
+git clone https://github.com/TheSpydog/fnalibs-apple-builder.git ~/code/fnalibs-apple-builder
+cd ~/code/fnalibs-apple-builder
+
+# Checkout matching versions (24.08)
+rm -rf FNA3D FAudio
+git clone https://github.com/FNA-XNA/FNA3D.git && cd FNA3D && git checkout 24.08 && git submodule update --init && cd ..
+git clone https://github.com/FNA-XNA/FAudio.git && cd FAudio && git checkout 24.08 && cd ..
+
+# Build FNA3D
+cd FNA3D && mkdir build && cd build
+cmake .. -DCMAKE_OSX_ARCHITECTURES="arm64" \
+  -DSDL2_INCLUDE_DIRS=/opt/homebrew/include/SDL2 \
+  -DSDL2_LIBRARIES=/opt/homebrew/lib/libSDL2.dylib \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+make -j8
+cd ../..
+
+# Build FAudio
+cd FAudio && mkdir build && cd build
+cmake .. -DCMAKE_OSX_ARCHITECTURES="arm64" \
+  -DSDL2_INCLUDE_DIRS=/opt/homebrew/include/SDL2 \
+  -DSDL2_LIBRARIES=/opt/homebrew/lib/libSDL2.dylib \
+  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+make -j8
+cd ../..
+```
+
+### Link Libraries and Run
+
+```bash
+# Copy/link native libs to build directory
+cd ~/code/PMDC/PMDC/bin/Release/net8.0
+ln -s /opt/homebrew/lib/libSDL2-2.0.0.dylib .
+cp ~/code/fnalibs-apple-builder/FNA3D/build/libFNA3D.0.dylib .
+cp ~/code/fnalibs-apple-builder/FAudio/build/libFAudio.0.dylib .
+ln -s /opt/homebrew/opt/lua@5.4/lib/liblua.dylib lua54.dylib
+
+# Run the game
+/opt/homebrew/opt/dotnet@8/bin/dotnet PMDC.dll \
+  -asset ~/code/PMDODump/DumpAsset/ \
+  -raw ~/code/PMDODump/RawAsset/
+```
+
+### Native Library Summary
+
+| Library | Version | Source |
+|---------|---------|--------|
+| SDL2 | 2.x | `brew install sdl2` |
+| FNA3D | 24.08 | Build from source |
+| FAudio | 24.08 | Build from source |
+| Lua | 5.4 | `brew install lua@5.4` |
+
+### Troubleshooting
+
+| Error | Solution |
+|-------|----------|
+| `.NET 8.0 not found` | Use `/opt/homebrew/opt/dotnet@8/bin/dotnet` |
+| `libSDL2 not found` | `ln -s /opt/homebrew/lib/libSDL2-2.0.0.dylib .` |
+| `libFNA3D not found` | Build FNA3D 24.08 from source (see above) |
+| `lua54 not found` | `ln -s /opt/homebrew/opt/lua@5.4/lib/liblua.dylib lua54.dylib` |
+
 ## External Resources
 
 - [Wiki](https://wiki.pmdo.pmdcollab.org/Main_Page)
 - [Pokécommunity Thread](https://www.pokecommunity.com/showthread.php?p=10325347)
-- [Releases](https://github.com/audinowho/PMDODump/releases)
+- [Releases](https://github.com/PMDCollab/PMDC/releases)
+- [FNA3D GitHub](https://github.com/FNA-XNA/FNA3D)
+- [fnalibs-apple-builder](https://github.com/TheSpydog/fnalibs-apple-builder)
