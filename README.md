@@ -1,4 +1,12 @@
-# PMD: Origins #
+# PMD: Origins
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/)
+[![GitHub stars](https://img.shields.io/github/stars/audinowho/PMDODump?style=social)](https://github.com/audinowho/PMDODump/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/audinowho/PMDODump?style=social)](https://github.com/audinowho/PMDODump/network/members)
+[![GitHub last commit](https://img.shields.io/github/last-commit/audinowho/PMDODump)](https://github.com/audinowho/PMDODump/commits)
+[![GitHub issues](https://img.shields.io/github/issues/audinowho/PMDODump)](https://github.com/audinowho/PMDODump/issues)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey)](https://github.com/audinowho/PMDODump/releases)
 
 Open source Pokémon roguelike with modding tools.
 
