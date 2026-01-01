@@ -8,6 +8,7 @@ using RogueEssence.Data;
 using PMDC.Dungeon;
 using PMDC;
 using PMDC.Data;
+using static DataGenerator.Data.CharAnim;
 
 namespace DataGenerator.Data
 {
@@ -51,82 +52,37 @@ namespace DataGenerator.Data
             }
             else if (ii == 1)
             {
-                skill.Name = new LocalText("Pound");
-                skill.Desc = new LocalText("The target is physically pounded with a long tail, a foreleg, or the like.");
-                skill.BaseCharges = 25;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(45));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(08);//Strike
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                BattleFX preFX = new BattleFX();
-                preFX.Sound = "DUN_Pound";
-                skill.HitboxAction.PreActions.Add(preFX);
+                SkillBuilder.Physical("Pound")
+                    .Desc("The target is physically pounded with a long tail, a foreleg, or the like.")
+                    .Charges(25).Element("normal").Power(45)
+                    .Contact().Melee(Strike)
+                    .PreSound("DUN_Pound")
+                    .ApplyTo(skill);
             }
             else if (ii == 2)
             {
-                skill.Name = new LocalText("-Karate Chop");
-                skill.Desc = new LocalText("The target is attacked with a sharp chop. Critical hits land more easily.");
-                skill.BaseCharges = 22;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(50));
-                skill.Data.OnActions.Add(0, new BoostCriticalEvent(1));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(09);//Chop
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
+                SkillBuilder.Physical("-Karate Chop")
+                    .Desc("The target is attacked with a sharp chop. Critical hits land more easily.")
+                    .Charges(22).Element("fighting").Power(50)
+                    .Contact().HighCrit().Melee(Chop)
+                    .ApplyTo(skill);
             }
             else if (ii == 3)
             {
-                skill.Name = new LocalText("-Double Slap");
-                skill.Desc = new LocalText("The target is slapped repeatedly, back and forth, four times in a row.");
-                skill.BaseCharges = 22;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 50;
-                skill.Data.SkillStates.Set(new BasePowerState(20));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 4;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(12);//Slap
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
+                SkillBuilder.Physical("-Double Slap")
+                    .Desc("The target is slapped repeatedly, back and forth, four times in a row.")
+                    .Charges(22).Element("normal").Power(20).Accuracy(50)
+                    .Contact().Strikes(4).Melee(Slap)
+                    .ApplyTo(skill);
             }
             else if (ii == 4)
             {
-                skill.Name = new LocalText("Comet Punch");
-                skill.Desc = new LocalText("The target is hit with a flurry of punches that strike four times in a row.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.SkillStates.Set(new FistState());
-                skill.Data.HitRate = 50;
-                skill.Data.SkillStates.Set(new BasePowerState(30));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 4;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(11);//Punch
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Punch";
-                ((AttackAction)skill.HitboxAction).Emitter = new SingleEmitter(new AnimData("Print_Fist", 12));
+                SkillBuilder.Physical("Comet Punch")
+                    .Desc("The target is hit with a flurry of punches that strike four times in a row.")
+                    .Charges(18).Element("normal").Power(30).Accuracy(50)
+                    .Contact().Fist().Strikes(4).Melee(Punch)
+                    .UseSound("DUN_Punch").Emitter("Print_Fist", 12)
+                    .ApplyTo(skill);
             }
             else if (ii == 5)
             {
@@ -374,23 +330,14 @@ namespace DataGenerator.Data
             }
             else if (ii == 14)
             {
-                skill.Name = new LocalText("Swords Dance");
-                skill.Desc = new LocalText("A frenetic dance to uplift the fighting spirit. This sharply raises the Attack stat.");
-                skill.BaseCharges = 12;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusStackBattleEvent("mod_attack", true, false, 2));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(27);//Twirl
-                skill.HitboxAction.ActionFX.Emitter = new SingleEmitter(new AnimData("Swords_Dance", 3));
-                skill.HitboxAction.TargetAlignments = (Alignment.Self | Alignment.Friend);
-                skill.Explosion.TargetAlignments = (Alignment.Self | Alignment.Friend);
-                BattleFX preFX = new BattleFX();
-                preFX.Sound = "DUN_Icicle_Spear";
-                skill.HitboxAction.PreActions.Add(preFX);
-                skill.HitboxAction.ActionFX.Sound = "DUN_Swords_Dance_2";
+                SkillBuilder.Status("Swords Dance")
+                    .Desc("A frenetic dance to uplift the fighting spirit. This sharply raises the Attack stat.")
+                    .Charges(12).Element("normal")
+                    .StatChange("mod_attack", 2, true)
+                    .Self(TailWhip).TargetAllies()
+                    .ActionEmitter("Swords_Dance", 3)
+                    .PreSound("DUN_Icicle_Spear").UseSound("DUN_Swords_Dance_2")
+                    .ApplyTo(skill);
             }
             else if (ii == 15)
             {
@@ -738,26 +685,12 @@ namespace DataGenerator.Data
             }
             else if (ii == 29)
             {
-                skill.Name = new LocalText("Headbutt");
-                skill.Desc = new LocalText("The user sticks out its head and attacks by charging straight into the target. This may also make the target flinch.");
-                skill.BaseCharges = 15;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(70));
-                skill.Data.SkillStates.Set(new AdditionalEffectState(35));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Data.OnHits.Add(0, new AdditionalEvent(new StatusBattleEvent("flinch", true, true)));
-                skill.Strikes = 1;
-                skill.HitboxAction = new DashAction();
-                ((DashAction)skill.HitboxAction).Range = 2;
-                ((DashAction)skill.HitboxAction).StopAtWall = true;
-                ((DashAction)skill.HitboxAction).StopAtHit = true;
-                ((DashAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Tackle";
+                SkillBuilder.Physical("Headbutt")
+                    .Desc("The user sticks out its head and attacks by charging straight into the target. This may also make the target flinch.")
+                    .Charges(15).Element("normal").Power(70)
+                    .Contact().InflictStatus("flinch", 35)
+                    .Dash(2).UseSound("DUN_Tackle")
+                    .ApplyTo(skill);
             }
             else if (ii == 30)
             {
@@ -833,24 +766,11 @@ namespace DataGenerator.Data
             }
             else if (ii == 33)
             {
-                skill.Name = new LocalText("Tackle");
-                skill.Desc = new LocalText("A physical attack in which the user charges and slams into the target with its whole body.");
-                skill.BaseCharges = 22;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(45));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new DashAction();
-                ((DashAction)skill.HitboxAction).Range = 2;
-                ((DashAction)skill.HitboxAction).StopAtWall = true;
-                ((DashAction)skill.HitboxAction).StopAtHit = true;
-                ((DashAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Tackle";
+                SkillBuilder.Physical("Tackle")
+                    .Desc("A physical attack in which the user charges and slams into the target with its whole body.")
+                    .Charges(22).Element("normal").Power(45)
+                    .Contact().Dash(2).UseSound("DUN_Tackle")
+                    .ApplyTo(skill);
             }
             else if (ii == 34)
             {
@@ -1097,29 +1017,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 44)
             {
-                skill.Name = new LocalText("Bite");
-                skill.Desc = new LocalText("The target is bitten with viciously sharp fangs. This may also make the target flinch.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "dark";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.SkillStates.Set(new JawState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(60));
-                skill.Data.SkillStates.Set(new AdditionalEffectState(35));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Data.OnHits.Add(0, new AdditionalEvent(new StatusBattleEvent("flinch", true, true)));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(18);//Bite
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                ((AttackAction)skill.HitboxAction).LagBehindTime = 10;
-                SingleEmitter emitter = new SingleEmitter(new AnimData("Bite", 3));
-                emitter.Offset = -8;
-                ((AttackAction)skill.HitboxAction).Emitter = emitter;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Bite";
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
+                SkillBuilder.Physical("Bite")
+                    .Desc("The target is bitten with viciously sharp fangs. This may also make the target flinch.")
+                    .Charges(18).Element("dark").Power(60)
+                    .Contact().Jaw().InflictStatus("flinch", 35)
+                    .Melee(Bite).Lag(10).Emitter("Bite", 3)
+                    .UseSound("DUN_Bite")
+                    .ApplyTo(skill);
             }
             else if (ii == 45)
             {
@@ -1147,27 +1051,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 46)
             {
-                skill.Name = new LocalText("Roar");
-                skill.Desc = new LocalText("The user makes a terrifying roar that blows back opposing Pokémon.");
-                skill.BaseCharges = 20;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.SkillStates.Set(new SoundState());
-                skill.Data.HitRate = 100;
-                skill.Data.OnHits.Add(0, new KnockBackEvent(8));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AreaAction();
-                ((AreaAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(38);//RearUp
-                ((AreaAction)skill.HitboxAction).HitArea = Hitbox.AreaLimit.Cone;
-                ((AreaAction)skill.HitboxAction).Range = 2;
-                ((AreaAction)skill.HitboxAction).Speed = 10;
-                SingleEmitter emitter = new SingleEmitter(new AnimData("Growl", 2), 2);
-                emitter.Offset = 12;
-                emitter.Layer = DrawLayer.Top;
-                ((AreaAction)skill.HitboxAction).ActionFX.Emitter = emitter;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Growl";
+                SkillBuilder.Status("Roar")
+                    .Desc("The user makes a terrifying roar that blows back opposing Pokémon.")
+                    .Charges(20).Element("normal").Accuracy(100)
+                    .Sound().Knockback(8)
+                    .Cone(RearUp, 2).ActionEmitter("Growl", 2)
+                    .UseSound("DUN_Growl")
+                    .ApplyTo(skill);
             }
             else if (ii == 47)
             {
@@ -1696,24 +1586,12 @@ namespace DataGenerator.Data
             }
             else if (ii == 64)
             {
-                skill.Name = new LocalText("Peck");
-                skill.Desc = new LocalText("The target is jabbed with a sharply pointed beak or horn.");
-                skill.BaseCharges = 24;
-                skill.Data.Element = "flying";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(45));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(20);//Jab
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                BattleFX preFX = new BattleFX();
-                preFX.Sound = "DUN_Peck";
-                skill.HitboxAction.PreActions.Add(preFX);
+                SkillBuilder.Physical("Peck")
+                    .Desc("The target is jabbed with a sharply pointed beak or horn.")
+                    .Charges(24).Element("flying").Power(45)
+                    .Contact().Melee(Jab)
+                    .PreSound("DUN_Peck")
+                    .ApplyTo(skill);
             }
             else if (ii == 65)
             {
@@ -1786,22 +1664,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 68)
             {
-                skill.Name = new LocalText("Counter");
-                skill.Desc = new LocalText("A retaliation move that counters any physical attack, inflicting double the damage taken.");
-                skill.BaseCharges = 15;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("counter", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(37);//Withdraw
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                BattleFX preFX = new BattleFX();
-                preFX.Sound = "DUN_Move_Start";
-                preFX.Emitter = new SingleEmitter(new AnimData("Charge_Up", 3));
-                skill.HitboxAction.PreActions.Add(preFX);
+                SkillBuilder.Status("Counter")
+                    .Desc("A retaliation move that counters any physical attack, inflicting double the damage taken.")
+                    .Charges(15).Element("fighting")
+                    .InflictStatus("counter")
+                    .Self(Withdraw).PreSound("DUN_Move_Start")
+                    .ApplyTo(skill);
+                // Note: Original had preFX emitter for Charge_Up - builder doesn't support PreAction emitters yet
             }
             else if (ii == 69)
             {

@@ -138,9 +138,60 @@ skill.Data.OnHits.Add(0, new GiveMapStatusEvent("rain"));
 
 ## Adding a New Move
 
-1. Find an unused index (check both SkillsPMD.cs and SkillsGen5Plus.cs)
-2. Add to the appropriate file based on index range
-3. Define all required properties:
+### Using SkillBuilder (Recommended)
+
+The `SkillBuilder` fluent API reduces boilerplate from ~30 lines to ~5-8 lines:
+
+```csharp
+else if (ii == 902)  // New move
+{
+    SkillBuilder.Physical("Custom Move")
+        .Desc("A powerful new attack.")
+        .Charges(15).Element("psychic").Power(90).Accuracy(95)
+        .Contact().Melee(CharAnim.Strike)
+        .UseSound("DUN_Attack")
+        .ApplyTo(skill);
+}
+```
+
+**Factory Methods:**
+| Method | Category | Defaults |
+|--------|----------|----------|
+| `Physical(name)` | Physical | HitRate=100, adds DamageFormulaEvent |
+| `Special(name)` | Magical | HitRate=100, adds DamageFormulaEvent |
+| `Status(name)` | Status | HitRate=-1 (always hits) |
+
+**Hitbox Actions:**
+| Method | Action Type | Description |
+|--------|-------------|-------------|
+| `Melee(anim)` | AttackAction | Single-target melee |
+| `MeleeWide(anim)` | AttackAction | Hits sides too |
+| `MeleeAround(anim)` | AttackAction | Hits all around |
+| `Projectile(anim, range, speed)` | ProjectileAction | Ranged attack |
+| `Area(anim, range)` | AreaAction | Area of effect |
+| `Cone(anim, range)` | AreaAction | Cone-shaped area |
+| `Dash(range)` | DashAction | Charge attack |
+| `Self(anim)` | SelfAction | Self-targeting |
+
+**Common Methods:**
+- `.Charges(n)` - Base PP
+- `.Element("type")` - Elemental type
+- `.Power(n)` - Base power
+- `.Accuracy(n)` - Hit rate (default 100 for attacks)
+- `.Strikes(n)` - Multi-hit count
+- `.Contact()` - Makes contact with target
+- `.Fist()`, `.Jaw()`, `.Blade()`, `.Sound()` - Move categories
+- `.HighCrit(stages)` - Increased crit rate
+- `.InflictStatus("status", chance)` - Status effect
+- `.StatChange("mod_x", stages, targetSelf)` - Stat modification
+- `.Recoil(divisor)` - Recoil damage
+- `.Knockback(tiles)` - Push target back
+- `.UseSound("sound")`, `.PreSound("sound")` - Sound effects
+- `.Emitter("anim", frameTime)` - Visual effects
+
+### Traditional Method
+
+For complex moves or those needing features not yet in SkillBuilder:
 
 ```csharp
 else if (ii == 902)  // New move

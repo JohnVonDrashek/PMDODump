@@ -8,6 +8,7 @@ using RogueEssence.Data;
 using PMDC.Dungeon;
 using PMDC;
 using PMDC.Data;
+using static DataGenerator.Data.CharAnim;
 
 namespace DataGenerator.Data
 {
@@ -173,18 +174,12 @@ namespace DataGenerator.Data
             }
             else if (ii == 475)
             {
-                skill.Name = new LocalText("-Autotomize");
-                skill.Desc = new LocalText("The user sheds part of its body to make itself lighter and sharply raise its Movement Speed.");
-                skill.BaseCharges = 15;
-                skill.Data.Element = "steel";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusStackBattleEvent("mod_speed", true, false, 2));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(06);//Charge
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
+                SkillBuilder.Status("-Autotomize")
+                    .Desc("The user sheds part of its body to make itself lighter and sharply raise its Movement Speed.")
+                    .Charges(15).Element("steel")
+                    .StatChange("mod_speed", 2, true)
+                    .Self(Charge)
+                    .ApplyTo(skill);
             }
             else if (ii == 476)
             {
@@ -279,23 +274,12 @@ namespace DataGenerator.Data
             }
             else if (ii == 480)
             {
-                skill.Name = new LocalText("-Storm Throw");
-                skill.Desc = new LocalText("The user strikes the target with a fierce blow. This attack always results in a critical hit.");
-                skill.BaseCharges = 15;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(50));
-                skill.Data.OnActions.Add(0, new BoostCriticalEvent(4));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(40);//Swing
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Wrap";
+                SkillBuilder.Physical("-Storm Throw")
+                    .Desc("The user strikes the target with a fierce blow. This attack always results in a critical hit.")
+                    .Charges(15).Element("fighting").Power(50)
+                    .Contact().HighCrit(4).Melee(Swing)
+                    .UseSound("DUN_Wrap")
+                    .ApplyTo(skill);
             }
             else if (ii == 481)
             {
@@ -527,25 +511,14 @@ namespace DataGenerator.Data
             }
             else if (ii == 490)
             {
-                skill.Name = new LocalText("-Low Sweep");
-                skill.Desc = new LocalText("The user makes a swift attack on the target's legs, which lowers the target's Movement Speed.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(60));
-                skill.Data.SkillStates.Set(new AdditionalEffectState(100));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Data.OnHits.Add(0, new AdditionalEvent(new StatusStackBattleEvent("mod_speed", true, true, -1)));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(21);//Kick
+                SkillBuilder.Physical("-Low Sweep")
+                    .Desc("The user makes a swift attack on the target's legs, which lowers the target's Movement Speed.")
+                    .Charges(16).Element("fighting").Power(60)
+                    .Contact().StatChange("mod_speed", -1)
+                    .Melee(Kick).UseSound("DUN_Drill Peck_2")
+                    .ApplyTo(skill);
+                // Note: Original had WideAngle = AttackCoverage.Wide, needs manual set if required
                 ((AttackAction)skill.HitboxAction).WideAngle = AttackCoverage.Wide;
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Drill Peck_2";
             }
             else if (ii == 491)
             {
@@ -815,22 +788,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 501)
             {
-                skill.Name = new LocalText("Quick Guard");
-                skill.Desc = new LocalText("The user protects itself and its allies from long-range moves for five turns.");
-                skill.BaseCharges = 15;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("quick_guard", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AreaAction();
-                ((AreaAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(37);//Withdraw
-                ((AreaAction)skill.HitboxAction).Range = 2;
-                ((AreaAction)skill.HitboxAction).Speed = 10;
-                skill.HitboxAction.TargetAlignments = (Alignment.Self | Alignment.Friend);
-                skill.Explosion.TargetAlignments = (Alignment.Self | Alignment.Friend);
-                skill.HitboxAction.ActionFX.Sound = "DUN_Astonish_2";
-                skill.HitboxAction.ActionFX.Emitter = new SingleEmitter(new AnimData("Screen_RSE_Gray", 3, -1, -1, 192));
+                SkillBuilder.Status("Quick Guard")
+                    .Desc("The user protects itself and its allies from long-range moves for five turns.")
+                    .Charges(15).Element("fighting")
+                    .InflictStatus("quick_guard")
+                    .Area(Withdraw, 2).TargetAllies()
+                    .UseSound("DUN_Astonish_2").ActionEmitter("Screen_RSE_Gray", 3)
+                    .ApplyTo(skill);
             }
             else if (ii == 502)
             {
