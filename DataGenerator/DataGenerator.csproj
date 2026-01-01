@@ -24,6 +24,7 @@
     <Compile Include="Data\MapStatusInfo.cs" />
     <Compile Include="Data\RankInfo.cs" />
     <Compile Include="Data\SkillGroupInfo.cs" />
+    <Compile Include="Data\Skills\SkillBuilder.cs" />
     <Compile Include="Data\Skills\SkillInfo.cs" />
     <Compile Include="Data\MonsterInfo.cs" />
     <Compile Include="Data\Skills\SkillsGen5Plus.cs" />

@@ -516,9 +516,10 @@ namespace DataGenerator.Data
         /// Adds recoil damage after the attack.
         /// </summary>
         /// <param name="divisor">Fraction of damage dealt as recoil (3 = 1/3).</param>
-        public SkillBuilder Recoil(int divisor)
+        /// <param name="maxHP">If true, recoil is based on max HP; if false, based on damage dealt.</param>
+        public SkillBuilder Recoil(int divisor, bool maxHP = false)
         {
-            _skill.Data.AfterActions.Add(0, new HPRecoilEvent(divisor));
+            _skill.Data.AfterActions.Add(0, new HPRecoilEvent(divisor, maxHP));
             return this;
         }
 
