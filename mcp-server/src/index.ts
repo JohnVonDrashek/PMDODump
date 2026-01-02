@@ -452,6 +452,9 @@ interface GameDataEntry {
   isUnreleased: boolean;
   properties: Record<string, string>;
   lineNumber: number;
+  // Monster-specific fields
+  element1?: string;
+  element2?: string;
 }
 
 async function extractDataEntries(category: DataCategory): Promise<GameDataEntry[]> {
@@ -595,10 +598,12 @@ async function extractDumpAssetEntries(category: DataCategory): Promise<GameData
       const released = entryObj.Released as boolean ?? true;
       const sortOrder = entryObj.SortOrder as number ?? index;
 
-      // For monsters, get description from Title if available
+      // For monsters, get description and type info from individual JSON file
       let description = "";
+      let element1: string | undefined;
+      let element2: string | undefined;
       if (category === "monsters") {
-        // Read individual JSON file to get Title (description)
+        // Read individual JSON file to get Title (description) and types
         const monsterFile = path.join(DUMP_ASSET_DIR, folderName, `${id}.json`);
         if (fs.existsSync(monsterFile)) {
           try {
@@ -609,6 +614,13 @@ async function extractDumpAssetEntries(category: DataCategory): Promise<GameData
             const monsterData = JSON.parse(monsterContent);
             const titleObj = monsterData.Object?.Title as Record<string, unknown> | undefined;
             description = titleObj?.DefaultText as string || "";
+
+            // Extract types from first form
+            const forms = monsterData.Object?.Forms as Array<Record<string, unknown>> | undefined;
+            if (forms && forms.length > 0) {
+              element1 = forms[0].Element1 as string | undefined;
+              element2 = forms[0].Element2 as string | undefined;
+            }
           } catch {
             // Ignore parse errors for individual files
           }
@@ -623,7 +635,9 @@ async function extractDumpAssetEntries(category: DataCategory): Promise<GameData
         description,
         isUnreleased: !released,
         properties: {},
-        lineNumber: 0
+        lineNumber: 0,
+        element1,
+        element2
       });
 
       index++;
@@ -807,15 +821,27 @@ Categories: ${Object.keys(DATA_CATEGORIES).join(", ")}`,
   }
 );
 
+// Valid element types for filtering
+const ELEMENT_TYPES = [
+  "bug", "dark", "dragon", "electric", "fairy", "fighting", "fire",
+  "flying", "ghost", "grass", "ground", "ice", "none", "normal",
+  "poison", "psychic", "rock", "steel", "water"
+] as const;
+
 server.tool(
   "pmdo_list_data",
   `List PMDO game data entries by category.
 
 Categories:
-${Object.entries(DATA_CATEGORIES).map(([k, v]) => `- ${k}: ${v.description}`).join("\n")}`,
+${Object.entries(DATA_CATEGORIES).map(([k, v]) => `- ${k}: ${v.description}`).join("\n")}
+
+For monsters, you can filter by type using element_type (e.g., "ice", "fire", "dragon").`,
   {
     category: z.enum(Object.keys(DATA_CATEGORIES) as [DataCategory, ...DataCategory[]])
       .describe("Category of data to list"),
+    element_type: z.enum(ELEMENT_TYPES)
+      .optional()
+      .describe("Filter monsters by type (e.g., 'ice', 'fire', 'dragon'). Only works with monsters category."),
     limit: z.number()
       .int()
       .min(1)
@@ -831,9 +857,31 @@ ${Object.entries(DATA_CATEGORIES).map(([k, v]) => `- ${k}: ${v.description}`).jo
       .default(false)
       .describe("Include unreleased/WIP entries marked with **")
   },
-  async ({ category, limit, offset, include_unreleased }) => {
+  async ({ category, element_type, limit, offset, include_unreleased }) => {
     const entries = await getDataEntries(category);
-    const filtered = include_unreleased ? entries : entries.filter(e => !e.isUnreleased);
+    let filtered = include_unreleased ? entries : entries.filter(e => !e.isUnreleased);
+
+    // Apply element type filter for monsters
+    if (element_type && category === "monsters") {
+      if (element_type === "none") {
+        // Special case: "none" only matches truly typeless Pokemon (both types are "none")
+        filtered = filtered.filter(e =>
+          e.element1 === "none" && (e.element2 === "none" || !e.element2)
+        );
+      } else {
+        // Normal case: match if type appears in either slot
+        filtered = filtered.filter(e =>
+          e.element1 === element_type || e.element2 === element_type
+        );
+      }
+    } else if (element_type && category !== "monsters") {
+      return {
+        content: [{
+          type: "text",
+          text: `Warning: element_type filter is only applicable to the 'monsters' category. Ignoring filter.`
+        }]
+      };
+    }
 
     const total = filtered.length;
     const paged = filtered.slice(offset, offset + limit);
@@ -853,17 +901,36 @@ ${Object.entries(DATA_CATEGORIES).map(([k, v]) => `- ${k}: ${v.description}`).jo
       "",
       `**Description:** ${DATA_CATEGORIES[category].description}`,
       `**Total:** ${total} entries (showing ${paged.length})`,
-      "",
-      "| Index | ID | Name | Description |",
-      "|-------|-----|------|-------------|"
-    ];
+      element_type ? `**Filtered by type:** ${element_type}` : "",
+      ""
+    ].filter(Boolean);
 
-    for (const entry of paged) {
-      const desc = entry.description
-        ? (entry.description.length > 50 ? entry.description.substring(0, 47) + "..." : entry.description)
-        : "(no description)";
-      const unreleased = entry.isUnreleased ? " (WIP)" : "";
-      lines.push(`| ${entry.index} | ${entry.id} | ${entry.name}${unreleased} | ${desc} |`);
+    // Use different table format for monsters (include types)
+    if (category === "monsters") {
+      lines.push("| Index | ID | Name | Types | Description |");
+      lines.push("|-------|-----|------|-------|-------------|");
+
+      for (const entry of paged) {
+        const desc = entry.description
+          ? (entry.description.length > 40 ? entry.description.substring(0, 37) + "..." : entry.description)
+          : "(no description)";
+        const unreleased = entry.isUnreleased ? " (WIP)" : "";
+        const types = [entry.element1, entry.element2]
+          .filter(t => t && t !== "none")
+          .join("/") || "none";
+        lines.push(`| ${entry.index} | ${entry.id} | ${entry.name}${unreleased} | ${types} | ${desc} |`);
+      }
+    } else {
+      lines.push("| Index | ID | Name | Description |");
+      lines.push("|-------|-----|------|-------------|");
+
+      for (const entry of paged) {
+        const desc = entry.description
+          ? (entry.description.length > 50 ? entry.description.substring(0, 47) + "..." : entry.description)
+          : "(no description)";
+        const unreleased = entry.isUnreleased ? " (WIP)" : "";
+        lines.push(`| ${entry.index} | ${entry.id} | ${entry.name}${unreleased} | ${desc} |`);
+      }
     }
 
     if (hasMore) {
