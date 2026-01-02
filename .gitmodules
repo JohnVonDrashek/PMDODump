@@ -3,7 +3,7 @@
 	url = https://github.com/JohnVonDrashek/PMDC.git
 [submodule "RawAsset"]
 	path = RawAsset
-	url = https://github.com/PMDCollab/RawAsset.git
+	url = https://github.com/JohnVonDrashek/RawAsset.git
 [submodule "DumpAsset"]
 	path = DumpAsset
-	url = https://github.com/audinowho/DumpAsset.git
+	url = https://github.com/JohnVonDrashek/DumpAsset.git
