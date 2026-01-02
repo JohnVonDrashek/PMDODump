@@ -3842,25 +3842,16 @@ namespace DataGenerator.Data
             }
             else if (ii == 154)
             {
-                skill.Name = new LocalText("Fury Swipes");
-                skill.Desc = new LocalText("The target is raked with sharp claws or scythes quickly five times in a row.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 70;
-                skill.Data.SkillStates.Set(new BasePowerState(15));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
+                SkillBuilder.Physical("Fury Swipes")
+                    .Desc("The target is raked with sharp claws or scythes quickly five times in a row.")
+                    .Charges(18).Element("normal").Power(15).Accuracy(70)
+                    .Contact().Strikes(5)
+                    .Melee(14).Emitter("Fury_Swipes", 3) // 14 = MultiScratch
+                    .UseSound("DUN_Fury_Swipes")
+                    .ApplyTo(skill);
+                // OnHitTiles terrain removal
                 SingleEmitter terrainEmitter = new SingleEmitter(new AnimData("Grass_Clear", 2));
                 skill.Data.OnHitTiles.Add(0, new RemoveTerrainStateEvent("DUN_Charge_Start", terrainEmitter, new FlagType(typeof(FoliageTerrainState))));
-                skill.Strikes = 5;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(14);//MultiScratch
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Fury_Swipes";
-                ((AttackAction)skill.HitboxAction).Emitter = new SingleEmitter(new AnimData("Fury_Swipes", 3));
             }
             else if (ii == 155)
             {
@@ -4034,29 +4025,19 @@ namespace DataGenerator.Data
             }
             else if (ii == 163)
             {
-                skill.Name = new LocalText("Slash");
-                skill.Desc = new LocalText("The target is attacked with a slash of claws or blades. Critical hits land more easily.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.SkillStates.Set(new BladeState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(75));
-                skill.Data.OnActions.Add(0, new BoostCriticalEvent(1));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
+                SkillBuilder.Physical("Slash")
+                    .Desc("The target is attacked with a slash of claws or blades. Critical hits land more easily.")
+                    .Charges(18).Element("normal").Power(75)
+                    .Contact().Blade().HighCrit()
+                    .Melee(13).UseSound("DUN_Slash") // 13 = Slice
+                    .ApplyTo(skill);
+                // OnHitTiles terrain removal
                 SingleEmitter cuttingEmitter = new SingleEmitter(new AnimData("Grass_Clear", 2));
                 skill.Data.OnHitTiles.Add(0, new RemoveTerrainStateEvent("DUN_Charge_Start", cuttingEmitter, new FlagType(typeof(FoliageTerrainState))));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(13);//Slice
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Slash";
+                // Complex ActionFX emitter with Offset
                 SingleEmitter single = new SingleEmitter(new AnimData("Slash_Ranger", 3));
                 single.Offset = 16;
                 skill.HitboxAction.ActionFX.Emitter = single;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
             }
             else if (ii == 164)
             {
@@ -4500,74 +4481,39 @@ namespace DataGenerator.Data
             }
             else if (ii == 183)
             {
-                skill.Name = new LocalText("=Mach Punch");
-                skill.Desc = new LocalText("The user throws a punch at blinding speed.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.SkillStates.Set(new FistState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(40));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new DashAction();
-                ((DashAction)skill.HitboxAction).CharAnim = 11;//Punch
-                ((DashAction)skill.HitboxAction).Range = 3;
-                ((DashAction)skill.HitboxAction).StopAtWall = true;
-                ((DashAction)skill.HitboxAction).HitTiles = true;
+                SkillBuilder.Physical("=Mach Punch")
+                    .Desc("The user throws a punch at blinding speed.")
+                    .Charges(18).Element("fighting").Power(40)
+                    .Contact().Fist()
+                    .Dash(Punch, 3, false)
+                    .UseSound("DUN_Rage").HitEmitter("Print_Fist", 12)
+                    .ApplyTo(skill);
+                // Complex emitter
                 AfterImageEmitter emitter = new AfterImageEmitter();
                 emitter.Alpha = 128;
                 emitter.AnimTime = 8;
                 emitter.BurstTime = 1;
                 ((DashAction)skill.HitboxAction).Emitter = emitter;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Rage";
-                skill.Data.HitFX.Emitter = new SingleEmitter(new AnimData("Print_Fist", 12));
             }
             else if (ii == 184)
             {
-                skill.Name = new LocalText("Scary Face");
-                skill.Desc = new LocalText("The user frightens the target with a scary face to harshly lower its Movement Speed.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = 70;
-                skill.Data.OnHits.Add(0, new StatusStackBattleEvent("mod_speed", true, false, -2));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AreaAction();
-                ((AreaAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(36);//Special
-                ((AreaAction)skill.HitboxAction).HitArea = Hitbox.AreaLimit.Cone;
-                ((AreaAction)skill.HitboxAction).Range = 2;
-                ((AreaAction)skill.HitboxAction).Speed = 10;
-                BattleFX preFX = new BattleFX();
-                preFX.Emitter = new SingleEmitter(new AnimData("Charge_Up", 3));
-                preFX.Sound = "DUN_Move_Start";
-                skill.HitboxAction.PreActions.Add(preFX);
-                skill.Data.HitFX.Emitter = new SingleEmitter(new AnimData("Scary_Face", 3));
-                skill.Data.HitFX.Sound = "DUN_Night_Shade";
-                skill.Data.HitFX.Delay = 20;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
+                SkillBuilder.Status("Scary Face")
+                    .Desc("The user frightens the target with a scary face to harshly lower its Movement Speed.")
+                    .Charges(16).Element("normal").Accuracy(70)
+                    .StatChange("mod_speed", -2)
+                    .Cone(Special, 2)
+                    .PreEmitter("Charge_Up", 3, "DUN_Move_Start")
+                    .HitFXDelay(20).HitEmitter("Scary_Face", 3).HitSound("DUN_Night_Shade")
+                    .ApplyTo(skill);
             }
             else if (ii == 185)
             {
-                skill.Name = new LocalText("Feint Attack");
-                skill.Desc = new LocalText("The user approaches the target disarmingly, then throws a sucker punch. This attack never misses.");
-                skill.BaseCharges = 20;
-                skill.Data.Element = "dark";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = -1;
-                skill.Data.SkillStates.Set(new BasePowerState(60));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(40);//Swing
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
+                SkillBuilder.Physical("Feint Attack")
+                    .Desc("The user approaches the target disarmingly, then throws a sucker punch. This attack never misses.")
+                    .Charges(20).Element("dark").Power(60).Accuracy(-1)
+                    .Contact().Melee(Swing)
+                    .ApplyTo(skill);
+                // Complex pre-emitter with Layer
                 SingleEmitter intro = new SingleEmitter(new AnimData("Feint_Attack", 1), 20);
                 intro.Layer = DrawLayer.Bottom;
                 BattleFX preFX = new BattleFX();
@@ -4577,25 +4523,15 @@ namespace DataGenerator.Data
             }
             else if (ii == 186)
             {
-                skill.Name = new LocalText("Sweet Kiss");
-                skill.Desc = new LocalText("The user kisses the target with a sweet, angelic cuteness that causes confusion.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "fairy";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = 100;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("confuse", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(25);//Appeal
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Sweet_Kiss";
+                SkillBuilder.Status("Sweet Kiss")
+                    .Desc("The user kisses the target with a sweet, angelic cuteness that causes confusion.")
+                    .Charges(18).Element("fairy")
+                    .InflictStatus("confuse")
+                    .Melee(25).Lag(20) // 25 = Appeal
+                    .UseSound("DUN_Sweet_Kiss").HitEmitter("Charm", 2, 12)
+                    .ApplyTo(skill);
+                // Complex emitter with offset
                 ((AttackAction)skill.HitboxAction).Emitter = new SingleEmitter(new AnimData("Sweet_Kiss_Angel", 4), 7);
-                ((AttackAction)skill.HitboxAction).LagBehindTime = 20;
-                SingleEmitter endAnim = new SingleEmitter(new AnimData("Charm", 2));
-                endAnim.LocHeight = 12;
-                skill.Data.HitFX.Emitter = endAnim;
             }
             else if (ii == 187)
             {
