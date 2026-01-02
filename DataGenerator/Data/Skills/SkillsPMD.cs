@@ -3769,19 +3769,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 151)
             {
-                skill.Name = new LocalText("Acid Armor");
-                skill.Desc = new LocalText("The user alters its cellular structure to liquefy itself, sharply raising its Defense stat.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "poison";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusStackBattleEvent("mod_defense", true, false, 2));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(06);//Charge
-                ((SelfAction)skill.HitboxAction).LagBehindTime = 10;
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
+                SkillBuilder.Status("Acid Armor")
+                    .Desc("The user alters its cellular structure to liquefy itself, sharply raising its Defense stat.")
+                    .Charges(18).Element("poison")
+                    .StatChange("mod_defense", 2, true)
+                    .Self(Charge).SelfLag(10)
+                    .ApplyTo(skill);
+                // Complex emitter
                 SqueezedAreaEmitter emitter = new SqueezedAreaEmitter(new AnimData("Bubbles_Blue", 4));
                 emitter.BurstTime = 3;
                 emitter.Bursts = 4;
@@ -3945,26 +3939,14 @@ namespace DataGenerator.Data
             }
             else if (ii == 158)
             {
-                skill.Name = new LocalText("Hyper Fang");
-                skill.Desc = new LocalText("The user bites hard on the target with its sharp front fangs. This may also make the target flinch.");
-                skill.BaseCharges = 18;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 100;
-                skill.Data.SkillStates.Set(new BasePowerState(75));
-                skill.Data.SkillStates.Set(new AdditionalEffectState(50));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Data.OnHits.Add(0, new AdditionalEvent(new StatusBattleEvent("flinch", true, true)));
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(18);//Bite
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
-                ((AttackAction)skill.HitboxAction).Emitter = new SingleEmitter(new AnimData("Fangs_Red", 3));
-                ((AttackAction)skill.HitboxAction).LagBehindTime = 10;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Revenge";
+                SkillBuilder.Physical("Hyper Fang")
+                    .Desc("The user bites hard on the target with its sharp front fangs. This may also make the target flinch.")
+                    .Charges(18).Element("normal").Power(75)
+                    .Contact().InflictStatus("flinch", 50)
+                    .Melee(Bite).Emitter("Fangs_Red", 3).Lag(10)
+                    .UseSound("DUN_Revenge")
+                    .ApplyTo(skill);
+                // Hit emitter with Layer
                 SingleEmitter endAnim = new SingleEmitter(new AnimData("Mega_Background_Yellow", 3));
                 endAnim.Layer = DrawLayer.Back;
                 skill.Data.HitFX.Emitter = endAnim;
@@ -3981,19 +3963,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 160)
             {
-                skill.Name = new LocalText("Conversion");
-                skill.Desc = new LocalText("The user gives itself the Conversion status, which changes its type to match its moves.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("conversion", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(38);//RearUp
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Conversion";
+                SkillBuilder.Status("Conversion")
+                    .Desc("The user gives itself the Conversion status, which changes its type to match its moves.")
+                    .Charges(16).Element("normal")
+                    .InflictStatus("conversion")
+                    .Self(RearUp).UseSound("DUN_Conversion")
+                    .ApplyTo(skill);
+                // Complex emitter
                 FiniteReleaseEmitter emitter = new FiniteReleaseEmitter(new AnimData("Puff_Green", 3), new AnimData("Puff_Yellow", 3), new AnimData("Puff_Blue", 3), new AnimData("Puff_Red", 3));
                 emitter.BurstTime = 6;
                 emitter.ParticlesPerBurst = 1;
@@ -4372,19 +4348,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 176)
             {
-                skill.Name = new LocalText("Conversion 2");
-                skill.Desc = new LocalText("The user gives itself the Conversion 2 status, which changes its type to resist the opponent's moves.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("conversion_2", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(38);//RearUp
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Conversion2";
+                SkillBuilder.Status("Conversion 2")
+                    .Desc("The user gives itself the Conversion 2 status, which changes its type to resist the opponent's moves.")
+                    .Charges(16).Element("normal")
+                    .InflictStatus("conversion_2")
+                    .Self(RearUp).UseSound("DUN_Conversion2")
+                    .ApplyTo(skill);
+                // Complex emitter
                 FiniteReleaseEmitter emitter = new FiniteReleaseEmitter(new AnimData("Puff_Green", 3), new AnimData("Puff_Yellow", 3), new AnimData("Puff_Blue", 3), new AnimData("Puff_Red", 3));
                 emitter.BurstTime = 6;
                 emitter.ParticlesPerBurst = 1;
@@ -4943,23 +4913,14 @@ namespace DataGenerator.Data
             }
             else if (ii == 199)
             {
-                skill.Name = new LocalText("Lock-On");
-                skill.Desc = new LocalText("The user takes aim, and ensures the next attack does not miss the target.");
-                skill.BaseCharges = 12;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("sure_shot", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(36);//Special
-                skill.HitboxAction.ActionFX.Emitter = new SingleEmitter(new AnimData("Lock_On", 1));
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Move_Start";
-                ((SelfAction)skill.HitboxAction).LagBehindTime = 26;
-                skill.Data.HitFX.Emitter = new SingleEmitter(new AnimData("Leer", 3));
-                skill.Data.HitFX.Sound = "DUN_Mind_Reader";
+                SkillBuilder.Status("Lock-On")
+                    .Desc("The user takes aim, and ensures the next attack does not miss the target.")
+                    .Charges(12).Element("normal")
+                    .InflictStatus("sure_shot")
+                    .Self(Special).SelfLag(26)
+                    .ActionEmitter("Lock_On", 1).UseSound("DUN_Move_Start")
+                    .HitEmitter("Leer", 3).HitSound("DUN_Mind_Reader")
+                    .ApplyTo(skill);
             }
             else if (ii == 200)
             {
