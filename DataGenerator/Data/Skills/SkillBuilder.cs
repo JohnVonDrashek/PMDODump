@@ -335,6 +335,18 @@ namespace DataGenerator.Data
         }
 
         /// <summary>
+        /// Sets lag time for self actions.
+        /// </summary>
+        public SkillBuilder SelfLag(int frames)
+        {
+            if (_skill.HitboxAction is SelfAction selfAction)
+            {
+                selfAction.LagBehindTime = frames;
+            }
+            return this;
+        }
+
+        /// <summary>
         /// Configures this skill as a dash attack.
         /// </summary>
         /// <param name="range">Dash range in tiles.</param>
@@ -417,6 +429,18 @@ namespace DataGenerator.Data
         }
 
         /// <summary>
+        /// Adds a pre-action emitter animation with sound.
+        /// </summary>
+        public SkillBuilder PreEmitter(string animName, int frameTime, string sound)
+        {
+            var preFX = new BattleFX();
+            preFX.Emitter = new SingleEmitter(new AnimData(animName, frameTime));
+            preFX.Sound = sound;
+            _skill.HitboxAction.PreActions.Add(preFX);
+            return this;
+        }
+
+        /// <summary>
         /// Sets the hit effect sound.
         /// </summary>
         public SkillBuilder HitSound(string sound)
@@ -447,11 +471,40 @@ namespace DataGenerator.Data
         }
 
         /// <summary>
+        /// Sets the hit effect emitter with a height offset.
+        /// </summary>
+        public SkillBuilder HitEmitter(string animName, int frameTime, int height)
+        {
+            var emitter = new SingleEmitter(new AnimData(animName, frameTime));
+            emitter.LocHeight = height;
+            _skill.Data.HitFX.Emitter = emitter;
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the delay before hit effects are shown.
+        /// </summary>
+        public SkillBuilder HitFXDelay(int frames)
+        {
+            _skill.Data.HitFX.Delay = frames;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the action FX emitter (shown during action).
         /// </summary>
         public SkillBuilder ActionEmitter(string animName, int frameTime = 3)
         {
             _skill.HitboxAction.ActionFX.Emitter = new SingleEmitter(new AnimData(animName, frameTime));
+            return this;
+        }
+
+        /// <summary>
+        /// Sets the action FX emitter with an offset.
+        /// </summary>
+        public SkillBuilder ActionEmitter(string animName, int frameTime, int offset)
+        {
+            _skill.HitboxAction.ActionFX.Emitter = new SingleEmitter(new AnimData(animName, frameTime), offset);
             return this;
         }
 

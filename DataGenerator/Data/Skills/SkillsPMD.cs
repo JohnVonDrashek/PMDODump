@@ -3971,23 +3971,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 159)
             {
-                skill.Name = new LocalText("Sharpen");
-                skill.Desc = new LocalText("The user lowers its polygon count to make itself more jagged, sharply raising the Attack stat.");
-                skill.BaseCharges = 20;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusStackBattleEvent("mod_attack", true, false, 2));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(38);//RearUp
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                SingleEmitter endAnim = new SingleEmitter(new AnimData("Sharpen", 2));
-                endAnim.LocHeight = 20;
-                skill.Data.HitFX.Delay = 40;
-                skill.Data.HitFX.Emitter = endAnim;
-                skill.Data.HitFX.Sound = "DUN_Sharpen";
+                SkillBuilder.Status("Sharpen")
+                    .Desc("The user lowers its polygon count to make itself more jagged, sharply raising the Attack stat.")
+                    .Charges(20).Element("normal")
+                    .StatChange("mod_attack", 2, true)
+                    .Self(RearUp)
+                    .HitFXDelay(40).HitEmitter("Sharpen", 2, 20).HitSound("DUN_Sharpen")
+                    .ApplyTo(skill);
             }
             else if (ii == 160)
             {
@@ -4530,20 +4520,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 182)
             {
-                skill.Name = new LocalText("Protect");
-                skill.Desc = new LocalText("It enables the user to evade all attacks.");
-                skill.BaseCharges = 10;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("protect", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(37);//Withdraw
-                skill.HitboxAction.ActionFX.Emitter = new SingleEmitter(new AnimData("Protect", 2), 4);
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Protect";
+                SkillBuilder.Status("Protect")
+                    .Desc("It enables the user to evade all attacks.")
+                    .Charges(10).Element("normal")
+                    .InflictStatus("protect")
+                    .Self(Withdraw).ActionEmitter("Protect", 2, 4)
+                    .UseSound("DUN_Protect")
+                    .ApplyTo(skill);
             }
             else if (ii == 183)
             {
