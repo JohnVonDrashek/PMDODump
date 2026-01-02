@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.NetStandard.ResXResourceReader, System.Resources.NetStandard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.NetStandard.ResXResourceWriter, System.Resources.NetStandard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </resheader>
+  <data name="Camps_Line_001" xml:space="preserve">
+    <value>Als die ersten Wegbereiter den Berg bestiegen,[pause=0] richteten sie entlang des Weges Rastlager ein.[br]Sobald man das {0} durchquert,[pause=0] welches sie hinterlassen haben, findet man einen Ort mit dem Namen {1}.</value>
+  </data>
+  <data name="Carry_Line_001" xml:space="preserve">
+    <value>Argh![pause=0] Warum hat Snorlax ausgerechnet vor unserem Lagerhaus ein Nickerchen gemacht?</value>
+  </data>
+  <data name="Carry_Line_002" xml:space="preserve">
+    <value>Ich würde ihn ja aufwecken und ihm meine Meinung sagen,[pause=0] aber ich erhole mich immer noch vom letzten Mal...</value>
+  </data>
+  <data name="Deliver_Line_001" xml:space="preserve">
+    <value>Die Vorräte für das Klippen-Lager sind in Verzug, und Schlukwech wird uns dafür den Kopf abreißen!</value>
+  </data>
+  <data name="Doduo_Line_001" xml:space="preserve">
+    <value>Wir sind das Team Taktischer Rückzug![pause=0]\nUnsere Spezialität ist es schneller zu sein als unsere Gegner!</value>
+  </data>
+  <data name="Doduo_Line_002" xml:space="preserve">
+    <value>Es kann echt verlockend sein alles zu bekämpfen, was einem im Mystery Dungeon entgegen kommt...[scroll] aber das ist nicht immer eine gute Idee.</value>
+  </data>
+  <data name="Doduo_Line_003" xml:space="preserve">
+    <value>Einige wilde Pokémon können richtig brutal sein.[pause=0]\nEs ist wichtig zu lernen wann man lieber rennen sollte um zu überleben.</value>
+  </data>
+  <data name="Pachirisu_Line_001" xml:space="preserve">
+    <value>He![pause=0] Schön so viele neue Gesichter zu sehen![br]Wollt ihr nach oben?[pause=0] Dann packt lieber sowas hier ein.</value>
+  </data>
+  <data name="Pachirisu_Line_002" xml:space="preserve">
+    <value>{0}! Tolles Teil, vor allem im unbekannten Territorium.[scroll]Wenn man zum ersten mal irgendwo hingeht,[pause=30] hat man keine Ahnung wie tief es geht[pause=30] oder wie gefährlich es wird.</value>
+  </data>
+  <data name="Pachirisu_Line_003" xml:space="preserve">
+    <value>Besonders, wenn der Mystery Dungeon dein Level zurücksetzt...</value>
+  </data>
+  <data name="Parent_Child_Line_001" xml:space="preserve">
+    <value>Mama, ich will rausgehen und spielen!</value>
+  </data>
+  <data name="Parent_Child_Line_002" xml:space="preserve">
+    <value>Na gut, mein Lieber,[pause=30] aber du darfst die Lichtung nicht verlassen.[br]Du bist immer noch ein Setzling, und da draußen gibt es große, furchterregende Mystery Dungeons.</value>
+  </data>
+  <data name="Sleeper_Line_001" xml:space="preserve">
+    <value>Relaxo befindet sich im Tiefschlaf und blockiert unangenehmer Weise den Eingang...</value>
+  </data>
+</root>

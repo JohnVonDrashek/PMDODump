@@ -1,0 +1,28 @@
+~*Missingno_ Norowara
+~*Rattata Alternate
++*Weezing Altcolor
+~*Weezing Altcolor Shiny
++*Porygon Altcolor
+~*Porygon Altcolor Shiny
++*Hitmontop Altcolor
+~*Hitmontop Altcolor Shiny
++*Raikou Altcolor
+~*Raikou Altcolor Shiny
+~*Zigzagoon Alternate
++*Zigzagoon Galar_Alternate
+~*Zigzagoon Galar_Alternate Shiny
+~*Garchomp Alternate
++*Archeops Alternate
+~*Archeops Alternate Shiny
++*Gogoat Alternate
+~*Gogoat Alternate Shiny
++*Pangoro Alternate
+~*Pangoro Alternate Shiny
+~Zygarde 10
+~Zygarde Complete
++*Golisopod Alternate
+~*Golisopod Alternate Shiny
+~Zacian Crowned_Sword
+~Zamazenta Crowned_Shield
++*Roaring_Moon Alternate
+~*Roaring_Moon Alternate Shiny

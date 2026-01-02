@@ -1,0 +1,7 @@
+﻿{
+"Version": "0.8.11.0",
+"Object": {
+"$type": "PMDC.Dev.CharSheetMirrorOp, PMDC",
+"StartRight": true
+}
+}

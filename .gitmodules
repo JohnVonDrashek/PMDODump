@@ -1,9 +1,3 @@
 [submodule "PMDC"]
 	path = PMDC
 	url = https://github.com/JohnVonDrashek/PMDC.git
-[submodule "RawAsset"]
-	path = RawAsset
-	url = https://github.com/JohnVonDrashek/RawAsset.git
-[submodule "DumpAsset"]
-	path = DumpAsset
-	url = https://github.com/JohnVonDrashek/DumpAsset.git
