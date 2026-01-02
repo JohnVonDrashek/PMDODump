@@ -3797,22 +3797,11 @@ namespace DataGenerator.Data
             }
             else if (ii == 152)
             {
-                skill.Name = new LocalText("-Crabhammer");
-                skill.Desc = new LocalText("The target is hammered with a large pincer. Critical hits land more easily.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "water";
-                skill.Data.Category = BattleData.SkillCategory.Physical;
-                skill.Data.SkillStates.Set(new ContactState());
-                skill.Data.HitRate = 80;
-                skill.Data.SkillStates.Set(new BasePowerState(100));
-                skill.Data.OnActions.Add(0, new BoostCriticalEvent(1));
-                skill.Data.OnHits.Add(-1, new DamageFormulaEvent());
-                skill.Strikes = 1;
-                skill.HitboxAction = new AttackAction();
-                ((AttackAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(08);//Strike
-                ((AttackAction)skill.HitboxAction).HitTiles = true;
-                skill.HitboxAction.TargetAlignments = Alignment.Foe;
-                skill.Explosion.TargetAlignments = Alignment.Foe;
+                SkillBuilder.Physical("-Crabhammer")
+                    .Desc("The target is hammered with a large pincer. Critical hits land more easily.")
+                    .Charges(16).Element("water").Power(100).Accuracy(80)
+                    .Contact().HighCrit().Melee(Strike)
+                    .ApplyTo(skill);
             }
             else if (ii == 153)
             {
@@ -4231,20 +4220,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 170)
             {
-                skill.Name = new LocalText("=Mind Reader");
-                skill.Desc = new LocalText("The user senses the target's movements with its mind to ensure its next attack does not miss the target.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "normal";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("sure_shot", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(36);//Special
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Mind_Reader";
-                skill.Data.HitFX.Emitter = new SingleEmitter(new AnimData("Mean_Look_RSE", 3));
+                SkillBuilder.Status("=Mind Reader")
+                    .Desc("The user senses the target's movements with its mind to ensure its next attack does not miss the target.")
+                    .Charges(16).Element("normal")
+                    .InflictStatus("sure_shot")
+                    .Self(Special)
+                    .UseSound("DUN_Mind_Reader").HitEmitter("Mean_Look_RSE", 3)
+                    .ApplyTo(skill);
             }
             else if (ii == 171)
             {
@@ -4945,20 +4927,13 @@ namespace DataGenerator.Data
             }
             else if (ii == 197)
             {
-                skill.Name = new LocalText("Detect");
-                skill.Desc = new LocalText("It enables the user to evade all attacks.");
-                skill.BaseCharges = 16;
-                skill.Data.Element = "fighting";
-                skill.Data.Category = BattleData.SkillCategory.Status;
-                skill.Data.HitRate = -1;
-                skill.Data.OnHits.Add(0, new StatusBattleEvent("detect", true, false));
-                skill.Strikes = 1;
-                skill.HitboxAction = new SelfAction();
-                ((SelfAction)skill.HitboxAction).CharAnimData = new CharAnimFrameType(06);//Charge
-                skill.HitboxAction.TargetAlignments = Alignment.Self;
-                skill.Explosion.TargetAlignments = Alignment.Self;
-                skill.HitboxAction.ActionFX.Sound = "DUN_Mind_Reader";
-                skill.Data.HitFX.Emitter = new SingleEmitter(new AnimData("Leer", 2));
+                SkillBuilder.Status("Detect")
+                    .Desc("It enables the user to evade all attacks.")
+                    .Charges(16).Element("fighting")
+                    .InflictStatus("detect")
+                    .Self(Charge)
+                    .UseSound("DUN_Mind_Reader").HitEmitter("Leer", 2)
+                    .ApplyTo(skill);
             }
             else if (ii == 198)
             {
